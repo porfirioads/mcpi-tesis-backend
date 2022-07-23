@@ -1,11 +1,14 @@
 from fastapi import APIRouter
 
-from app.schemas.exploration_schemas import ExplorationObject
+from app.schemas.exploration_schemas import Exploration
 
 
 router = APIRouter(prefix='/exploration', tags=['Exploration'])
 
 
-@router.get('/', response_model=ExplorationObject)
+@router.get('/', response_model=Exploration)
 def home():
-    return 'Hello exploration'
+    return Exploration(
+        name='Hello exploration',
+        description='This is the hello exploration description.'
+    )

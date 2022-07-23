@@ -1,4 +1,4 @@
-from api.app.shared.patterns.singleton import SingletonMeta
+from app.utils.singleton import SingletonMeta
 
 
 class WordCloudService(metaclass=SingletonMeta):
