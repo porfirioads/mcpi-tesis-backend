@@ -1,8 +1,10 @@
 from datetime import datetime
 from fastapi import UploadFile, HTTPException
+from app.schemas.dataset_schemas import DatasetSummary
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
-import csv
+import json
+import pandas as pd
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -20,12 +22,14 @@ class DatasetService(metaclass=SingletonMeta):
 
         return file_path
 
-    def read_csv(self, file_path: str, encoding: str, delimiter: str) -> str:
-        with open(file_path, encoding=encoding) as csv_file:
-            csv_reader = csv.DictReader(csv_file, delimiter=delimiter)
-            print(csv_reader.fieldnames)
-            print(csv_reader.dialect)
+    def read_dataset(self, file_path: str, encoding: str, delimiter: str) -> pd.DataFrame:
+        df = pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
+        return df
 
-            for row in csv_reader:
-                print(csv_reader.line_num)
-
+    def get_dataset_summary(self, df: pd.DataFrame) -> DatasetSummary:
+        return DatasetSummary(
+            row_count=df.shape[0],
+            col_count=df.shape[1],
+            columns=list(df.columns.values),
+            samples=json.loads(df.head(5).transpose().to_json())
+        )

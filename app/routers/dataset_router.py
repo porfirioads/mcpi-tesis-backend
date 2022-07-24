@@ -1,9 +1,6 @@
-from datetime import datetime
-from fastapi import APIRouter, Body, File, Form, HTTPException, Path, UploadFile
-from app.schemas.exploration_schemas import Exploration
+from fastapi import APIRouter, Body, File, Form, UploadFile
+from app.schemas.dataset_schemas import DatasetSummary
 from app.services.dataset_service import DatasetService
-from app.utils.strings import Strings
-
 
 router = APIRouter(prefix='/datasets', tags=['Datasets'])
 
@@ -11,20 +8,16 @@ dataset_service = DatasetService()
 
 
 @router.get('')
-async def get_datasets_list():
+def get_datasets_list():
     return ['22220723163026-tucson.csv', '22220722171824-encuesta.csv']
 
 
-@router.post('/upload')
-async def upload_dataset(
+@router.post('/upload', response_model=DatasetSummary)
+def upload_dataset(
     file: UploadFile = File(...),
     encoding: str = Form(...),
-    delimiter: str = Form(...)
+    delimiter: str = Form(..., example='|')
 ):
-    uploaded_file_path = dataset_service.upload_dataset(file)
-    dataset_summary = dataset_service.read_csv(
-        uploaded_file_path,
-        encoding,
-        delimiter
-    )
-    return uploaded_file_path
+    file_path = dataset_service.upload_dataset(file)
+    df = dataset_service.read_dataset(file_path, encoding, delimiter)
+    return dataset_service.get_dataset_summary(df)
