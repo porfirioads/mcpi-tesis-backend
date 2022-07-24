@@ -6,7 +6,8 @@ from app.routers.dataset_router import router as dataset_router
 
 app = FastAPI(
     title='Tesis MCPI',
-    description='Proyecto de desarrollo para la tesis de la Maestría en Ciencias del Procesamiento de la Información.',
+    description='Proyecto de desarrollo para la tesis de la Maestría en ' +
+    'Ciencias del Procesamiento de la Información.',
     version='1.0.0',
     debug=True
 )
