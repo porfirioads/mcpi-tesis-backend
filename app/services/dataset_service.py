@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import List
 from fastapi import UploadFile, HTTPException
 from app.schemas.dataset_schemas import DatasetSummary
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
 import json
 import pandas as pd
+import os
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -33,3 +35,6 @@ class DatasetService(metaclass=SingletonMeta):
             columns=list(df.columns.values),
             samples=json.loads(df.head(5).transpose().to_json())
         )
+
+    def get_datasets_list(self) -> List[str]:
+        return os.listdir('uploads')

@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Body, File, Form, UploadFile
 from app.schemas.dataset_schemas import DatasetSummary
 from app.services.dataset_service import DatasetService
@@ -7,9 +8,9 @@ router = APIRouter(prefix='/datasets', tags=['Datasets'])
 dataset_service = DatasetService()
 
 
-@router.get('')
+@router.get('', response_model=List[str])
 def get_datasets_list():
-    return ['22220723163026-tucson.csv', '22220722171824-encuesta.csv']
+    return dataset_service.get_datasets_list()
 
 
 @router.post('/upload', response_model=DatasetSummary)
