@@ -15,6 +15,7 @@ matplotlib = "*"
 seaborn = "*"
 imbalanced-learn = "*"
 autopep8 = "*"
+pre-commit = "*"
 
 [dev-packages]
 autopep8 = "*"
