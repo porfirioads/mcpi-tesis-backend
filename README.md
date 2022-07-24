@@ -50,3 +50,4 @@ Detener un proceso por medio de su id:
 
 ```bash
 kill -9 <pid>
+```
