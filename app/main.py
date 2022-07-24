@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import logger
 from app.routers.exploration_router import router as exploration_router
+from app.routers.dataset_router import router as dataset_router
 
 app = FastAPI(
     title='Tesis MCPI',
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(exploration_router)
+app.include_router(dataset_router)
 
 
 @app.on_event('startup')
