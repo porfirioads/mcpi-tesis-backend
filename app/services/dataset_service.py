@@ -10,6 +10,9 @@ import os
 
 
 class DatasetService(metaclass=SingletonMeta):
+    def get_datasets_list(self) -> List[str]:
+        return os.listdir('uploads')
+
     def upload_dataset(self, file: UploadFile) -> str:
         if file.content_type != 'text/csv':
             raise HTTPException(
@@ -35,6 +38,3 @@ class DatasetService(metaclass=SingletonMeta):
             columns=list(df.columns.values),
             samples=json.loads(df.head(5).transpose().to_json())
         )
-
-    def get_datasets_list(self) -> List[str]:
-        return os.listdir('uploads')
