@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = {extras = ["all"], version = "*"}
+fastapi = {version = "==0.79.0", extras = ["all"]}
 uvicorn = {extras = ["standard"], version = "*"}
 pandas = "*"
 scikit-learn = "*"
