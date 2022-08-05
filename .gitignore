@@ -225,13 +225,9 @@ pubspec.lock
 !.devcontainer/recommended-devcontainer.json
 !.devcontainer/recommended-Dockerfile
 .settings/
-.vscode/launch.json
-.vscode/settings.json
-.vscode/tasks.json
 *.swo
 *.swp
 modules/.settings
-modules/.vscode
 .vimrc
 .nvimrc
 
@@ -262,3 +258,11 @@ baseline.json
 
 # Husky
 .husky/_
+
+.
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

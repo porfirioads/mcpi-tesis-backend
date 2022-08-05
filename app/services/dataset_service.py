@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 from fastapi import UploadFile, HTTPException
-from app.schemas.dataset_schemas import DatasetSummary
+from app.schemas.dataset_schemas import DatasetCleanInput, DatasetSummary
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
 import json
@@ -38,3 +38,6 @@ class DatasetService(metaclass=SingletonMeta):
             columns=list(df.columns.values),
             samples=json.loads(df.head(5).transpose().to_json())
         )
+
+    def clean_dataset(self, data: DatasetCleanInput) -> str:
+        df = self.read_dataset(data.file_path, data.encoding, data.delimiter)
