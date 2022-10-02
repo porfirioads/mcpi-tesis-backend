@@ -11,8 +11,8 @@ import os
 
 class DatasetService(metaclass=SingletonMeta):
     def get_datasets_list(self) -> List[str]:
-        datasets = os.listdir('data/uploads')
-        datasets.remove('.gitkeep')
+        datasets = os.listdir('uploads')
+        # datasets.remove('.gitkeep')
         return datasets
 
     def upload_dataset(self, file: UploadFile) -> str:
@@ -22,7 +22,7 @@ class DatasetService(metaclass=SingletonMeta):
 
         timestamp = int(datetime.timestamp(datetime.now()))
         snack_name = Strings.to_snack_case(file.filename)
-        file_name = f'data/uploads/{timestamp}_{snack_name}'
+        file_name = f'uploads/{timestamp}_{snack_name}'
 
         with open(file_name, 'wb') as f:
             f.write(file.file.read())
@@ -33,6 +33,4 @@ class DatasetService(metaclass=SingletonMeta):
         return DatasetSummary(
             row_count=df.shape[0],
             col_count=df.shape[1],
-            columns=list(df.columns.values),
-            samples=json.loads(df.head(5).transpose().to_json())
         )

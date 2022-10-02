@@ -177,7 +177,7 @@ class CleaningService(metaclass=SingletonMeta):
 
     def clean_dataset(self, data: DatasetCleanInput) -> str:
         # Read original dataset
-        original_file_path = f'data/uploads/{data.file_name}'
+        original_file_path = f'uploads/{data.file_name}'
         original_df = datasets.read_dataset(
             original_file_path,
             data.encoding,
@@ -186,7 +186,7 @@ class CleaningService(metaclass=SingletonMeta):
         original_length = original_df.shape[0]
 
         # New dataset file name
-        file_path = f'data/uploads/{data.file_name[0: -4]}_cleaned.csv'
+        file_path = f'uploads/{data.file_name[0: -4]}_cleaned.csv'
 
         # Open file in write mode
         file = open(file_path, 'w', encoding=data.encoding)

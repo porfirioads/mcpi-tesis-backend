@@ -266,3 +266,6 @@ baseline.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Uploaded datsets
+uploads

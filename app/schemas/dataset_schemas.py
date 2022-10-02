@@ -5,8 +5,6 @@ from pydantic import BaseModel, Field
 class DatasetSummary(BaseModel):
     row_count: int
     col_count: int
-    columns: List[str]
-    samples: Dict[str, Any]
 
 
 class DatasetCleanInput(BaseModel):

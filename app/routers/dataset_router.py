@@ -16,6 +16,16 @@ def get_datasets_list():
     return dataset_service.get_datasets_list()
 
 
+@router.get('/{file_path}', response_model=DatasetSummary)
+def get_dataset(
+        file_path: str,
+        encoding: str = 'latin-1',
+        delimiter: str = ','
+):
+    df = datasets.read_dataset(f'uploads/{file_path}', encoding, delimiter)
+    return dataset_service.get_dataset_summary(df)
+
+
 @router.post('/upload', response_model=DatasetSummary)
 def upload_dataset(
     file: UploadFile = File(),
