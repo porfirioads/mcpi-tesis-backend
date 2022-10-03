@@ -3,6 +3,7 @@ from fastapi import APIRouter, File, Form, UploadFile
 from app.schemas.dataset_schemas import DatasetCleanInput, DatasetSummary
 from app.services.cleaning_service import CleaningService
 from app.services.dataset_service import DatasetService
+from fastapi.responses import FileResponse
 from app.utils import datasets
 
 router = APIRouter(prefix='/datasets', tags=['Datasets'])
@@ -35,6 +36,13 @@ def upload_dataset(
     file_path = dataset_service.upload_dataset(file)
     df = datasets.read_dataset(file_path, encoding, delimiter)
     return dataset_service.get_dataset_summary(df)
+
+
+@router.post('/download')
+def download_dataset(
+    file_path
+):
+    return FileResponse(path=f'uploads/{file_path}', media_type='text/csv', filename=file_path)
 
 
 @router.post('/clean', response_model=DatasetSummary, responses={})
