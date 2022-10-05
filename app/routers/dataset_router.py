@@ -17,7 +17,7 @@ def get_datasets_list():
     return dataset_service.get_datasets_list()
 
 
-@router.get('/{file_path}', response_model=DatasetSummary)
+@router.get('/details/{file_path}', response_model=DatasetSummary)
 def get_dataset(
         file_path: str,
         encoding: str = 'latin-1',
@@ -38,10 +38,9 @@ def upload_dataset(
     return dataset_service.get_dataset_summary(df)
 
 
-@router.post('/download')
-def download_dataset(
-    file_path
-):
+@router.get('/download')
+def download_dataset(file_path: str):
+    print(file_path)
     return FileResponse(path=f'uploads/{file_path}', media_type='text/csv', filename=file_path)
 
 
