@@ -8,6 +8,9 @@ Proyecto de desarrollo para la tesis de la Maestría en Ciencias del Procesamien
 - [Instrucciones de ejecución](#instrucciones-de-ejecución)
 - [Comandos útiles](#comandos-útiles)
   - [Manejo de procesos](#manejo-de-procesos)
+- [Recursos](#recursos)
+  - [Samples originales](#samples-originales)
+  - [Respuestas dudosas](#respuestas-dudosas)
 
 # Requisitos
 
@@ -51,3 +54,19 @@ Detener un proceso por medio de su id:
 ```bash
 kill -9 <pid>
 ```
+
+# Recursos
+
+- [Respuestas Tucson](https://docs.google.com/spreadsheets/d/19GgVMb-Aq1c-rAwh_9mPyeLuWu6FZqg_eoA_HWuJGDc/edit#gid=345668867)
+
+## Samples originales
+
+- [Samples Dr. Celaya](https://docs.google.com/spreadsheets/d/1aeYyg5jbzB2ta6fNdsf_uYCLQvybZ-x1fdFKv8iLbDE/edit#gid=2129512129)
+- [Samples Dr. Huitzy](https://docs.google.com/spreadsheets/d/10WPWgKDDN3GAEFuklFCGSz0HB26amN7o_W8dMqUSKrg/edit#gid=640831378)
+- [Samples Porfirio](https://docs.google.com/spreadsheets/d/1aIOrp1windsA12OBMRop_IFkGH3Na6AYaglUJMusYjs/edit#gid=1092706847)
+- [Samples Tucson](https://docs.google.com/spreadsheets/d/1lNre50rzHjvlBqz1_EJRRayfTy7T2KprSd9XnF1kqt0/edit#gid=1446544166)
+## Respuestas dudosas
+
+- [Respuestas dudosas Dr. Celaya ](https://docs.google.com/spreadsheets/d/1VOciAb0kHwfiKjMKteNTNH6qNdFurDc1gbM0lTjCRK4/edit#gid=2129512129)
+- [Respuestas dudosas Dr. Huitzy ](https://docs.google.com/spreadsheets/d/1tsN1sGY0NmXvLcngHdyOIidOJagKiNlfNXo6b2fCnIc/edit#gid=2129512129)
+- [Respuestas dudosas Porfirio ](https://docs.google.com/spreadsheets/d/1ryfWPxuNS3qtSYal7YoQ-ihRMXxRgvVbku7eeLaecaY/edit#gid=2129512129)
