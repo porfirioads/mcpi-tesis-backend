@@ -11,6 +11,7 @@ Proyecto de desarrollo para la tesis de la Maestría en Ciencias del Procesamien
 - [Recursos](#recursos)
   - [Samples originales](#samples-originales)
   - [Respuestas dudosas](#respuestas-dudosas)
+  - [Dataset final](#dataset-final)
 
 # Requisitos
 
@@ -57,7 +58,7 @@ kill -9 <pid>
 
 # Recursos
 
-- [Respuestas Tucson](https://docs.google.com/spreadsheets/d/19GgVMb-Aq1c-rAwh_9mPyeLuWu6FZqg_eoA_HWuJGDc/edit#gid=345668867)
+- [Resultados encuesta](https://drive.google.com/drive/u/1/folders/19EUNpSZYqA0abc3yoJ8vnRST6V9SuH8E)
 
 ## Samples originales
 
@@ -70,3 +71,7 @@ kill -9 <pid>
 - [Respuestas dudosas Dr. Celaya ](https://docs.google.com/spreadsheets/d/1VOciAb0kHwfiKjMKteNTNH6qNdFurDc1gbM0lTjCRK4/edit#gid=2129512129)
 - [Respuestas dudosas Dr. Huitzy ](https://docs.google.com/spreadsheets/d/1tsN1sGY0NmXvLcngHdyOIidOJagKiNlfNXo6b2fCnIc/edit#gid=2129512129)
 - [Respuestas dudosas Porfirio ](https://docs.google.com/spreadsheets/d/1ryfWPxuNS3qtSYal7YoQ-ihRMXxRgvVbku7eeLaecaY/edit#gid=2129512129)
+
+## Dataset final
+
+- [Respuestas Tucson](https://docs.google.com/spreadsheets/d/19GgVMb-Aq1c-rAwh_9mPyeLuWu6FZqg_eoA_HWuJGDc/edit#gid=345668867)
