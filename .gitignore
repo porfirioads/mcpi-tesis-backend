@@ -268,4 +268,5 @@ baseline.json
 !.vscode/extensions.json
 
 # Uploaded datsets
-uploads
+uploads/*
+!uploads/.gitkeep

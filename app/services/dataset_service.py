@@ -4,7 +4,6 @@ from fastapi import UploadFile, HTTPException
 from app.schemas.dataset_schemas import DatasetSummary
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
-import json
 import pandas as pd
 import os
 
@@ -12,7 +11,7 @@ import os
 class DatasetService(metaclass=SingletonMeta):
     def get_datasets_list(self) -> List[str]:
         datasets = os.listdir('uploads')
-        # datasets.remove('.gitkeep')
+        datasets.remove('.gitkeep')
         return datasets
 
     def upload_dataset(self, file: UploadFile) -> str:
