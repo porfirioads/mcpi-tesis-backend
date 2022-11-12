@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.config import logger
 from app.routers.exploration_router import router as exploration_router
 from app.routers.dataset_router import router as dataset_router
+from app.routers.preprocessor_router import router as preprocessor_router
 from app.scripts import download_corpora
 import pandas as pd
 
@@ -25,6 +26,7 @@ app.add_middleware(
 
 app.include_router(exploration_router)
 app.include_router(dataset_router)
+app.include_router(preprocessor_router)
 
 
 @app.on_event('startup')
