@@ -1,14 +1,19 @@
-from http.client import HTTPException
-import os
+from datetime import datetime
 from typing import List
 from fastapi import UploadFile, HTTPException
-from app.schemas.common_schemas import FileUpload
+from app.schemas.dataset_schemas import DatasetSummary
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
-from datetime import datetime
+import pandas as pd
+import os
 
 
 class DatasetService(metaclass=SingletonMeta):
+    def get_datasets_list(self) -> List[str]:
+        datasets = os.listdir('uploads')
+        datasets.remove('.gitkeep')
+        return datasets
+
     def upload_dataset(self, file: UploadFile) -> str:
         if file.content_type != 'text/csv':
             raise HTTPException(
@@ -23,7 +28,8 @@ class DatasetService(metaclass=SingletonMeta):
 
         return file_name
 
-    def get_datasets_list(self) -> List[str]:
-        datasets = os.listdir('uploads')
-        datasets.remove('.gitkeep')
-        return datasets
+    def get_dataset_summary(self, df: pd.DataFrame) -> DatasetSummary:
+        return DatasetSummary(
+            row_count=df.shape[0],
+            col_count=df.shape[1],
+        )
