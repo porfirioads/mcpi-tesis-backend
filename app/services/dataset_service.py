@@ -1,4 +1,3 @@
-from http.client import HTTPException
 import os
 from typing import List
 from fastapi import UploadFile, HTTPException
@@ -16,14 +15,14 @@ class DatasetService(metaclass=SingletonMeta):
 
         timestamp = int(datetime.timestamp(datetime.now()))
         snack_name = Strings.to_snack_case(file.filename)
-        file_name = f'uploads/{timestamp}_{snack_name}'
+        file_path = f'{timestamp}_{snack_name}'
 
-        with open(file_name, 'wb') as f:
+        with open(f'uploads/{file_path}', 'wb') as f:
             f.write(file.file.read())
 
-        return file_name
+        return FileUpload(file_path=file_path)
 
     def get_datasets_list(self) -> List[str]:
-        datasets = os.listdir('uploads')
-        datasets.remove('.gitkeep')
-        return datasets
+        files = os.listdir('uploads')
+        files.remove('.gitkeep')
+        return [FileUpload(file_path=f'{file_name}') for file_name in files]

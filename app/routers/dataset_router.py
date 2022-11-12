@@ -1,51 +1,34 @@
 from typing import List
-from fastapi import APIRouter, File, Form, UploadFile
-from app.schemas.dataset_schemas import DatasetCleanInput, DatasetSummary
-from app.services.cleaning_service import CleaningService
-from app.services.dataset_service_back import DatasetService
+from fastapi import APIRouter, File, UploadFile
+from app.schemas.common_schemas import FileUpload
 from fastapi.responses import FileResponse
-from app.utils import datasets
+from app.services.dataset_service import DatasetService
+from app.config import logger
 
 router = APIRouter(prefix='/datasets', tags=['Datasets'])
 
 dataset_service = DatasetService()
-cleaning_service = CleaningService()
 
 
-@router.get('', response_model=List[str])
-def get_datasets_list():
+@router.get('/', response_model=List[FileUpload])
+def get_dataset_list():
+    logger.debug('get_dataset_list')
     return dataset_service.get_datasets_list()
 
 
-@router.get('/details/{file_path}', response_model=DatasetSummary)
-def get_dataset(
-        file_path: str,
-        encoding: str = 'latin-1',
-        delimiter: str = ','
-):
-    df = datasets.read_dataset(f'uploads/{file_path}', encoding, delimiter)
-    return dataset_service.get_dataset_summary(df)
-
-
-@router.post('/upload', response_model=DatasetSummary)
+@router.post('/upload', response_model=FileUpload)
 def upload_dataset(
     file: UploadFile = File(),
-    encoding: str = Form('latin-1'),
-    delimiter: str = Form(',')
 ):
-    file_path = dataset_service.upload_dataset(file)
-    df = datasets.read_dataset(file_path, encoding, delimiter)
-    return dataset_service.get_dataset_summary(df)
+    logger.debug('upload_dataset')
+    return dataset_service.upload_dataset(file)
 
 
 @router.get('/download')
 def download_dataset(file_path: str):
-    print(file_path)
-    return FileResponse(path=f'uploads/{file_path}', media_type='text/csv', filename=file_path)
-
-
-@router.post('/clean', response_model=DatasetSummary, responses={})
-def clean_dataset(data: DatasetCleanInput):
-    file_path = cleaning_service.clean_dataset(data)
-    df = datasets.read_dataset(file_path, data.encoding, data.delimiter)
-    return dataset_service.get_dataset_summary(df)
+    logger.debug('download_dataset')
+    return FileResponse(
+        path=f'uploads/{file_path}',
+        media_type='text/csv',
+        filename=file_path
+    )
