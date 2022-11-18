@@ -26,6 +26,7 @@ class DatasetService(metaclass=SingletonMeta):
     def get_datasets_list(self) -> List[str]:
         files = os.listdir('uploads')
         files.remove('.gitkeep')
+        files.remove('cleaned')
         return [FileUpload(file_path=f'{file_name}') for file_name in files]
 
     def download_dataset(self, file_path: str) -> FileResponse:
