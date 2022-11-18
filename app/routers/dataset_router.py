@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import APIRouter, File, UploadFile
 from app.schemas.common_schemas import FileUpload
-from fastapi.responses import FileResponse
 from app.services.dataset_service import DatasetService
 from app.config import logger
 
@@ -27,8 +26,4 @@ def upload_dataset(
 @router.get('/download')
 def download_dataset(file_path: str):
     logger.debug('download_dataset')
-    return FileResponse(
-        path=f'uploads/{file_path}',
-        media_type='text/csv',
-        filename=file_path
-    )
+    return dataset_service.download_dataset(file_path)

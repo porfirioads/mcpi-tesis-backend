@@ -4,6 +4,7 @@ from fastapi import UploadFile, HTTPException
 from app.schemas.common_schemas import FileUpload
 from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
+from fastapi.responses import FileResponse
 from datetime import datetime
 
 
@@ -26,3 +27,11 @@ class DatasetService(metaclass=SingletonMeta):
         files = os.listdir('uploads')
         files.remove('.gitkeep')
         return [FileUpload(file_path=f'{file_name}') for file_name in files]
+
+    def download_dataset(self, file_path: str) -> FileResponse:
+        os.stat(f'uploads/{file_path}')
+        return FileResponse(
+            path=f'uploads/{file_path}',
+            media_type='text/csv',
+            filename=file_path
+        )
