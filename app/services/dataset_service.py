@@ -33,7 +33,9 @@ class DatasetService(metaclass=SingletonMeta):
         if 'cleaned' in files:
             files.remove('cleaned')
 
-        return [FileUpload(file_path=f'{file_name}') for file_name in files]
+        return [
+            FileUpload(file_path=f'{file_name}') for file_name in files
+        ]
 
     def download_dataset(self, file_path: str) -> FileResponse:
         os.stat(f'uploads/{file_path}')
@@ -44,8 +46,9 @@ class DatasetService(metaclass=SingletonMeta):
         )
 
     def summary_dataset(self, file_path: str, encoding: str, delimiter) -> dict:
+        os.stat(f'uploads/cleaned/{file_path}')
         df = datasets.read_dataset(
-            file_path=f'uploads/{file_path}',
+            file_path=f'uploads/cleaned/{file_path}',
             encoding=encoding,
             delimiter=delimiter
         )
