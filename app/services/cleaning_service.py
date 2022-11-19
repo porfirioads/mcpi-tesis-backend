@@ -2,6 +2,7 @@ import re
 from app.utils.singleton import SingletonMeta
 from app.utils import datasets
 from app.config import logger
+from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
 
 GENERATED_COLUMNS = [
@@ -56,7 +57,7 @@ class CleaningService(metaclass=SingletonMeta):
         vbd = 0  # VBD ?
         vbg = 0  # VBG ?
         vbn = 0  # Verbo participio
-        Vbp = 0  # Verbo presente
+        vbp = 0  # Verbo presente
         vbz = 0  # Verbo tercera persona
         wdt = 0  # Wh-determiner
         wp = 0  # Pronombre de pregunta (quién, qué)
@@ -85,7 +86,7 @@ class CleaningService(metaclass=SingletonMeta):
             if (pos == "CC"):
                 cc = cc + 1
             if (pos == "VBP"):
-                Vbp = Vbp + 1
+                vbp = vbp + 1
             if (pos == "CD"):
                 cd = cd + 1
             if (pos == "DT"):
@@ -166,45 +167,49 @@ class CleaningService(metaclass=SingletonMeta):
         cant_caracteres = len(text)
 
         # PASO 7: Generación de fila para dataset
-        Ten = minusculas.lower()
-        CanPala = cantidad
-        new_row = f'{Ten}|{CanPala}|{cc}|{Vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|{jj}|' +\
+        ten = minusculas.lower()
+        can_pala = cantidad
+        new_row = f'{ten}|{can_pala}|{cc}|{vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|{jj}|' +\
             f'{jjr}|{jjs}|{ls}|{md}|{nn}|{nns}|{nnp}|{nnps}|{pdt}|{posss}|' +\
             f'{prp}|{rb}|{rbr}|{rp}|{to}|{uh}|{vb}|{vbd}|{vbg}|{vbn}|{vbz}|' +\
             f'{wdt}|{wp}|{wps}|{wrb}|{palabras_pos}|{palabras_neg}|' +\
             f'{acumulado_pos}|{acumulado_neg}|{Polari}|{cant_caracteres}\n'
         return new_row
 
-    def clean_dataset(self, file_path: str) -> str:
+    def clean(self, file_path: str) -> FileUpload:
         # Define dataset configuration
         encoding = 'utf-8'
         delimiter = ','
-        target_column = ''
-        text_column = ''  # TODO: Fill this data
 
         # Read original dataset
         original_file_path = f'uploads/{file_path}'
-        original_df = datasets.read_dataset(original_file_path, 'utf-8', ',')
-        original_length = original_df.shape[0]
+        original_df = datasets.read_dataset(
+            original_file_path,
+            encoding,
+            delimiter
+        )
 
         # New dataset file name
-        file_path = f'uploads/{file_path[0: -4]}_cleaned.csv'
+        file_path = f'uploads/cleaned/{file_path[0: -4]}_cleaned.csv'
 
         # Open file in write mode
-        file = open(file_path, 'w', encoding='utf-8')
+        file = open(file_path, 'w', encoding=encoding)
 
         # Header columns generation
-        headers = f'{target_column}|{text_column}'
+        headers = f'sentiment|answer|{"|".join(GENERATED_COLUMNS)}\n'
 
         # Write header columns
         file.write(headers)
 
-        # Iterate original dataset and write calculated values for the new one
-        for index, row in original_df.iterrows():
-            logger.debug(f'Cleaning row {index + 1}/{original_length}')
-            new_row = self.generate_clean_row(row[text_column])
-            logger.debug(new_row)
+        # Get the columns that contains answers
+        answers = original_df.columns[3:].to_list()
+
+        # Iterate answers to generate the new dataset
+        for answer in answers:
+            row = f'{original_df[answer].value_counts().idxmax()}|{self.generate_clean_row(answer)}'
+            file.write(row)
 
         # End file writting
         file.close()
-        return file_path
+
+        return FileUpload(file_path=file_path)

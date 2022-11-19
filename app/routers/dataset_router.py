@@ -18,9 +18,7 @@ def get_dataset_list():
 
 
 @router.post('/upload', response_model=FileUpload)
-def upload_dataset(
-    file: UploadFile = File(),
-):
+def upload_dataset(file: UploadFile = File()):
     logger.debug('upload_dataset')
     return dataset_service.upload_dataset(file)
 
@@ -34,4 +32,4 @@ def download_dataset(file_path: str):
 @router.get('/clean', response_model=FileUpload)
 def clean_dataset(file_path: str):
     logger.debug('clean_dataset')
-    return dataset_service.clean_dataset(file_path)
+    return cleaning_service.clean(file_path)
