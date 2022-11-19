@@ -1,5 +1,4 @@
 import re
-from app.schemas.dataset_schemas import DatasetCleanInput
 from app.utils.singleton import SingletonMeta
 from app.utils import datasets
 from app.config import logger
@@ -63,20 +62,21 @@ class CleaningService(metaclass=SingletonMeta):
         wp = 0  # Pronombre de pregunta (quién, qué)
         wps = 0  # WP$ Posesivo con pronombre (cuyo)
         wrb = 0  # Wh-adverb (dónde, cuándo)
-        Palabras_POS = 0
-        Palabras_NEG = 0
-        AcumuladoPOS = 0
-        AcumuladoNeg = 0
+        palabras_pos = 0
+        palabras_neg = 0
+        acumulado_pos = 0
+        acumulado_neg = 0
 
         # PASO 1: QUITAR URLS Y @
         url = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
         url2 = '(www\.)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
         emoticons = "['\&\-\.\/()=:;]+"
-        patron = re.compile('_|•|-|#|@|[¿?]|' + url + '|' + url2 + '|' + emoticons)
-        entradaM = patron.sub(' ', text)
+        patron = re.compile(
+            '_|•|-|#|@|[¿?]|' + url + '|' + url2 + '|' + emoticons)
+        entrada_m = patron.sub(' ', text)
 
         # PASO 2: CONVERTIR TEXTO EN MINUSCULAS
-        texto = TextBlob(entradaM)
+        texto = TextBlob(entrada_m)
         minusculas = texto.correct()
         minusculas = texto.lower()
 
@@ -146,14 +146,14 @@ class CleaningService(metaclass=SingletonMeta):
                 wps = wps + 1
             if (pos == "WRB"):
                 wrb = wrb + 1
-            Verf = TextBlob(word)
-            WSent = Verf.sentiment.polarity
-            if (WSent > 0):
-                Palabras_POS = Palabras_POS + 1
-                AcumuladoPOS = AcumuladoPOS + WSent
-            if (WSent < 0):
-                Palabras_NEG = Palabras_NEG + 1
-                AcumuladoNeg = AcumuladoNeg + WSent
+            verf = TextBlob(word)
+            w_sent = verf.sentiment.polarity
+            if (w_sent > 0):
+                palabras_pos = palabras_pos + 1
+                acumulado_pos = acumulado_pos + w_sent
+            if (w_sent < 0):
+                palabras_neg = palabras_neg + 1
+                acumulado_neg = acumulado_neg + w_sent
 
         # PASO 4: Tokens
         palabras = minusculas.words
@@ -171,41 +171,38 @@ class CleaningService(metaclass=SingletonMeta):
         new_row = f'{Ten}|{CanPala}|{cc}|{Vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|{jj}|' +\
             f'{jjr}|{jjs}|{ls}|{md}|{nn}|{nns}|{nnp}|{nnps}|{pdt}|{posss}|' +\
             f'{prp}|{rb}|{rbr}|{rp}|{to}|{uh}|{vb}|{vbd}|{vbg}|{vbn}|{vbz}|' +\
-            f'{wdt}|{wp}|{wps}|{wrb}|{Palabras_POS}|{Palabras_NEG}|' +\
-            f'{AcumuladoPOS}|{AcumuladoNeg}|{Polari}|{cant_caracteres}\n'
+            f'{wdt}|{wp}|{wps}|{wrb}|{palabras_pos}|{palabras_neg}|' +\
+            f'{acumulado_pos}|{acumulado_neg}|{Polari}|{cant_caracteres}\n'
         return new_row
 
-    def clean_dataset(self, data: DatasetCleanInput) -> str:
+    def clean_dataset(self, file_path: str) -> str:
+        # Define dataset configuration
+        encoding = 'utf-8'
+        delimiter = ','
+        target_column = ''
+        text_column = ''  # TODO: Fill this data
+
         # Read original dataset
-        original_file_path = f'uploads/{data.file_name}'
-        original_df = datasets.read_dataset(
-            original_file_path,
-            data.encoding,
-            data.delimiter
-        )
+        original_file_path = f'uploads/{file_path}'
+        original_df = datasets.read_dataset(original_file_path, 'utf-8', ',')
         original_length = original_df.shape[0]
 
         # New dataset file name
-        file_path = f'uploads/{data.file_name[0: -4]}_cleaned.csv'
+        file_path = f'uploads/{file_path[0: -4]}_cleaned.csv'
 
         # Open file in write mode
-        file = open(file_path, 'w', encoding=data.encoding)
+        file = open(file_path, 'w', encoding='utf-8')
 
         # Header columns generation
-        headers = f'{data.target_column}|{data.text_column}'
-        if len(data.selected_columns):
-            headers = f'{headers}|{"|".join(data.selected_columns)}'
-        headers = f'{headers}|{"|".join(data.generated_columns)}\n'
+        headers = f'{target_column}|{text_column}'
 
         # Write header columns
         file.write(headers)
 
         # Iterate original dataset and write calculated values for the new one
-        logger.debug(original_df.columns)
-        # calculated_values = {}
         for index, row in original_df.iterrows():
             logger.debug(f'Cleaning row {index + 1}/{original_length}')
-            new_row = self.generate_clean_row(row[data.text_column])
+            new_row = self.generate_clean_row(row[text_column])
             logger.debug(new_row)
 
         # End file writting
