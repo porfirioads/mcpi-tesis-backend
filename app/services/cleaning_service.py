@@ -186,10 +186,10 @@ class CleaningService(metaclass=SingletonMeta):
         )
 
         # New dataset file name
-        file_path = f'cleaned/{file_path[0: -4]}_cleaned.csv'
+        file_path = f'{file_path[0: -4]}_cleaned.csv'
 
         # Open file in write mode
-        file = open(f'uploads/{file_path}', 'w', encoding=encoding)
+        file = open(f'uploads/cleaned/{file_path}', 'w', encoding=encoding)
 
         # Header columns generation
         headers = f'sentiment|answer|{"|".join(GENERATED_COLUMNS)}\n'
