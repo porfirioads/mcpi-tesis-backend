@@ -176,11 +176,7 @@ class CleaningService(metaclass=SingletonMeta):
             f'{acumulado_pos}|{acumulado_neg}|{Polari}|{cant_caracteres}\n'
         return new_row
 
-    def clean(self, file_path: str) -> FileUpload:
-        # Define dataset configuration
-        encoding = 'utf-8'
-        delimiter = ','
-
+    def clean(self, file_path: str, encoding: str, delimiter: str) -> FileUpload:
         # Read original dataset
         original_file_path = f'uploads/{file_path}'
         original_df = datasets.read_dataset(

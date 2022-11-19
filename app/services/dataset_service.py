@@ -6,6 +6,7 @@ from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
 from fastapi.responses import FileResponse
 from datetime import datetime
+from app.utils import datasets
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -23,10 +24,15 @@ class DatasetService(metaclass=SingletonMeta):
 
         return FileUpload(file_path=file_path)
 
-    def get_datasets_list(self) -> List[str]:
-        files = os.listdir('uploads')
-        files.remove('.gitkeep')
-        files.remove('cleaned')
+    def get_datasets_list(self, path: str = None) -> List[str]:
+        files = os.listdir(f'uploads/{path}' if path else 'uploads')
+
+        if '.gitkeep' in files:
+            files.remove('.gitkeep')
+
+        if 'cleaned' in files:
+            files.remove('cleaned')
+
         return [FileUpload(file_path=f'{file_name}') for file_name in files]
 
     def download_dataset(self, file_path: str) -> FileResponse:
@@ -36,3 +42,11 @@ class DatasetService(metaclass=SingletonMeta):
             media_type='text/csv',
             filename=file_path
         )
+
+    def summary_dataset(self, file_path: str, encoding: str, delimiter) -> dict:
+        df = datasets.read_dataset(
+            file_path=f'uploads/{file_path}',
+            encoding=encoding,
+            delimiter=delimiter
+        )
+        return df['sentiment'].value_counts().to_dict()
