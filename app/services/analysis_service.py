@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable
 from app.utils.singleton import SingletonMeta
 from app.utils.datasets import read_dataset
 import pandas as pd
@@ -49,6 +49,25 @@ class AnalysisService(metaclass=SingletonMeta):
         self,
         df: pd.DataFrame,
         text_column: str,
-        classifiers: List[str]
     ) -> pd.DataFrame:
-        pass
+        data = []
+
+        for text in df[text_column]:
+            scores = [
+                self.get_vader_score(str(text)),
+                self.get_textblob_score(str(text)),
+                self.get_textblob_naive_bayes_score(str(text)),
+            ]
+
+        for i in range(len(scores)):
+            if scores[i] > 0.15:
+                scores[i] = 1
+            elif scores[i] < -0.15:
+                scores[i] = -1
+            else:
+                scores[i] = 0
+
+        return pd.DataFrame(
+            data,
+            columns=['Answer', 'Vader', 'Textblob', 'Naive', 'MaxVoting']
+        )
