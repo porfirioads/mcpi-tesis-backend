@@ -270,3 +270,6 @@ baseline.json
 # Uploaded datsets
 uploads/*
 !uploads/.gitkeep
+!uploads/cleaned
+uploads/cleaned/*
+!uploads/cleaned/.gitkeep
