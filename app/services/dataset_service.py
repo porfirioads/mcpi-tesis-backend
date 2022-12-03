@@ -31,7 +31,18 @@ class DatasetService(metaclass=SingletonMeta):
 
         return df
 
-    def upload_dataset(self, file: UploadFile) -> str:
+    def to_csv(self, df: pd.DataFrame, file_path: str) -> FileUpload:
+        timestamp = int(datetime.timestamp(datetime.now()))
+        file_path = f'{file_path[0: -4]}_{timestamp}.csv'
+
+        df.to_csv(
+            f'uploads/classified/{file_path}',
+            index=False
+        )
+
+        return FileUpload(file_path=file_path)
+
+    def upload_dataset(self, file: UploadFile) -> FileUpload:
         if file.content_type != 'text/csv':
             raise HTTPException(
                 status_code=400, detail='DATASET_MUST_BE_A_CSV')
@@ -45,7 +56,7 @@ class DatasetService(metaclass=SingletonMeta):
 
         return FileUpload(file_path=file_path)
 
-    def get_datasets_list(self, path: str = None) -> List[str]:
+    def get_datasets_list(self, path: str = None) -> List[FileUpload]:
         files = os.listdir(f'uploads/{path}' if path else 'uploads')
 
         if '.gitkeep' in files:

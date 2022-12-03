@@ -22,12 +22,4 @@ def pretrained(file_path: str):
         'sentiment'
     )
 
-    timestamp = int(datetime.timestamp(datetime.now()))
-    file_path = f'{file_path[0: -4]}_{timestamp}.csv'
-
-    df_classified.to_csv(
-        f'uploads/classified/{file_path}',
-        index=False
-    )
-
-    return FileUpload(file_path=file_path)
+    return dataset_service.to_csv(df_classified, file_path)
