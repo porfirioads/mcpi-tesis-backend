@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import logger
 from app.routers.dataset_router import router as dataset_router
+from app.routers.analysis_router import router as analysis_router
 from app.scripts import download_corpora
 
 app = FastAPI(
@@ -22,6 +23,7 @@ app.add_middleware(
 )
 
 app.include_router(dataset_router)
+app.include_router(analysis_router)
 
 
 @app.on_event('startup')

@@ -273,3 +273,6 @@ uploads/*
 !uploads/cleaned
 uploads/cleaned/*
 !uploads/cleaned/.gitkeep
+!uploads/classified
+uploads/classified/*
+!uploads/classified/.gitkeep
