@@ -28,7 +28,7 @@ class AnalysisService(metaclass=SingletonMeta):
 
         return df
 
-    def most_frequent(self, items):
+    def most_frequent(self, items: List):
         occurence_count = Counter(items)
         return occurence_count.most_common(1)[0][0]
 
@@ -61,10 +61,10 @@ class AnalysisService(metaclass=SingletonMeta):
     ) -> pd.DataFrame:
         data = []
 
-        for i in range(len(df)):
-            print(f'classifying item {i + 1} of {len(df)}')
-            text = df.loc[i, text_column]
-            sentiment = df.loc[i, target_column]
+        for index, row in df.iterrows():
+            print(f'classifying item {index + 1} of {len(df)}')
+            text = row[text_column]
+            sentiment = row[target_column]
 
             scores = [
                 self.get_vader_score(str(text)),
@@ -73,9 +73,9 @@ class AnalysisService(metaclass=SingletonMeta):
             ]
 
             for i in range(len(scores)):
-                if scores[i] > 0.15:
+                if scores[i] > 0.3:
                     scores[i] = 1
-                elif scores[i] < -0.15:
+                elif scores[i] < -0.3:
                     scores[i] = -1
                 else:
                     scores[i] = 0

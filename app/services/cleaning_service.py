@@ -4,6 +4,7 @@ from app.utils import datasets
 from app.config import logger
 from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
+from datetime import datetime
 
 GENERATED_COLUMNS = [
     'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw', 'inn', 'jj', 'jjr', 'jjs',
@@ -15,18 +16,6 @@ GENERATED_COLUMNS = [
 
 
 class CleaningService(metaclass=SingletonMeta):
-    def get_unwanted_words(self):
-        pass
-
-    def remove_unwanted_words(self, sentence: str):
-        pass
-
-    def remove_yes_no_answers(self, sentence: str):
-        pass
-
-    def remove_non_alphabetic(self, sentence: str):
-        pass
-
     def generate_clean_row(self, text: str) -> str:
         cc = 0  # Conjunción de coordinación
         cd = 0  # Dígito cardinal
@@ -186,7 +175,8 @@ class CleaningService(metaclass=SingletonMeta):
         )
 
         # New dataset file name
-        file_path = f'{file_path[0: -4]}_cleaned.csv'
+        timestamp = int(datetime.timestamp(datetime.now()))
+        file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
         # Open file in write mode
         file = open(f'uploads/cleaned/{file_path}', 'w', encoding=encoding)

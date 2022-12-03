@@ -23,6 +23,12 @@ def get_cleaned_dataset_list():
     return dataset_service.get_datasets_list(path='cleaned')
 
 
+@router.get('/classified', response_model=List[FileUpload])
+def get_classified_dataset_list():
+    logger.debug('get_classified_dataset_list()')
+    return dataset_service.get_datasets_list(path='classified')
+
+
 @router.post('/upload', response_model=FileUpload)
 def upload_dataset(file: UploadFile = File()):
     logger.debug('upload_dataset()')

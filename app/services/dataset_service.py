@@ -17,7 +17,7 @@ class DatasetService(metaclass=SingletonMeta):
 
         timestamp = int(datetime.timestamp(datetime.now()))
         snack_name = Strings.to_snack_case(file.filename)
-        file_path = f'{timestamp}_{snack_name}'
+        file_path = f'{snack_name[0: -4]}_{timestamp}.csv'
 
         with open(f'uploads/{file_path}', 'wb') as f:
             f.write(file.file.read())
@@ -32,6 +32,9 @@ class DatasetService(metaclass=SingletonMeta):
 
         if 'cleaned' in files:
             files.remove('cleaned')
+
+        if 'classified' in files:
+            files.remove('classified')
 
         return [
             FileUpload(file_path=f'{file_name}') for file_name in files
