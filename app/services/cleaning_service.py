@@ -1,6 +1,6 @@
 import re
+from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
-from app.utils import datasets
 from app.config import logger
 from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
@@ -16,6 +16,8 @@ GENERATED_COLUMNS = [
 
 
 class CleaningService(metaclass=SingletonMeta):
+    dataset_service = DatasetService()
+
     def generate_clean_row(self, text: str) -> str:
         cc = 0  # Conjunción de coordinación
         cd = 0  # Dígito cardinal
@@ -168,7 +170,7 @@ class CleaningService(metaclass=SingletonMeta):
     def clean(self, file_path: str, encoding: str, delimiter: str) -> FileUpload:
         # Read original dataset
         original_file_path = f'uploads/{file_path}'
-        original_df = datasets.read_dataset(
+        original_df = self.dataset_service.read_dataset(
             original_file_path,
             encoding,
             delimiter

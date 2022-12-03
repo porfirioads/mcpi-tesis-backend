@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from app.config import logger
 from app.routers.dataset_router import router as dataset_router
 from app.routers.analysis_router import router as analysis_router
-from app.scripts import download_corpora
+from app.utils import download_nltk_corpora
 
 app = FastAPI(
     title='Tesis MCPI',
@@ -29,7 +29,7 @@ app.include_router(analysis_router)
 @app.on_event('startup')
 def on_startup():
     logger.info('on_startup')
-    download_corpora.start()
+    download_nltk_corpora.start()
 
 
 @app.on_event('shutdown')

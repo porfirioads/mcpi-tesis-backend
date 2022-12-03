@@ -1,32 +1,18 @@
-from typing import List, Callable
+
+from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
-from app.utils.datasets import read_dataset
-import pandas as pd
+from collections import Counter
 from nltk.sentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
+from textblob.classifiers import MaxEntClassifier, DecisionTreeClassifier, NaiveBayesClassifier, PositiveNaiveBayesClassifier
 from textblob.sentiments import NaiveBayesAnalyzer
-from collections import Counter
+from typing import List
+import pandas as pd
 
 
-class AnalysisService(metaclass=SingletonMeta):
+class PretrainedAnalysisService(metaclass=SingletonMeta):
     sia = SentimentIntensityAnalyzer()
-
-    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
-        df = read_dataset(
-            file_path=f'uploads/cleaned/{file_path}',
-            encoding='utf-8',
-            delimiter='|'
-        )
-
-        df['sentiment'] = df['sentiment'].replace(
-            {
-                'Positivo': '1',
-                'Negativo': '-1',
-                'Neutral': '0'
-            }
-        )
-
-        return df
+    dataset_service = DatasetService()
 
     def most_frequent(self, items: List):
         occurence_count = Counter(items)

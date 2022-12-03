@@ -6,10 +6,31 @@ from app.utils.singleton import SingletonMeta
 from app.utils.strings import Strings
 from fastapi.responses import FileResponse
 from datetime import datetime
-from app.utils import datasets
+import pandas as pd
 
 
 class DatasetService(metaclass=SingletonMeta):
+    def read_dataset(self, file_path: str, encoding: str, delimiter: str) -> pd.DataFrame:
+        df = pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
+        return df
+
+    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
+        df = self.read_dataset(
+            file_path=f'uploads/cleaned/{file_path}',
+            encoding='utf-8',
+            delimiter='|'
+        )
+
+        df['sentiment'] = df['sentiment'].replace(
+            {
+                'Positivo': '1',
+                'Negativo': '-1',
+                'Neutral': '0'
+            }
+        )
+
+        return df
+
     def upload_dataset(self, file: UploadFile) -> str:
         if file.content_type != 'text/csv':
             raise HTTPException(
@@ -50,7 +71,7 @@ class DatasetService(metaclass=SingletonMeta):
 
     def summary_dataset(self, file_path: str, encoding: str, delimiter) -> dict:
         os.stat(f'uploads/cleaned/{file_path}')
-        df = datasets.read_dataset(
+        df = self.read_dataset(
             file_path=f'uploads/cleaned/{file_path}',
             encoding=encoding,
             delimiter=delimiter
