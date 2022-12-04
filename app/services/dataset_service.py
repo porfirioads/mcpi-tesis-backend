@@ -7,6 +7,7 @@ from app.utils.strings import Strings
 from fastapi.responses import FileResponse
 from datetime import datetime
 import pandas as pd
+from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score, precision_score
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -16,7 +17,7 @@ class DatasetService(metaclass=SingletonMeta):
 
     def prepare_dataset(self, file_path: str) -> pd.DataFrame:
         df = self.read_dataset(
-            file_path=f'uploads/cleaned/{file_path}',
+            file_path=file_path,
             encoding='utf-8',
             delimiter='|'
         )
@@ -98,14 +99,45 @@ class DatasetService(metaclass=SingletonMeta):
             elif row[y_true] == -1:
                 pass
 
-        from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score
+        accuracy = accuracy_score(
+            df[y_true],
+            df[y_pred],
+            # pos_label=1,
+            # average='micro'
+        )
 
-        accuracy = accuracy_score(df[y_true], df[y_pred])
-        kappa = cohen_kappa_score(df[y_true], df[y_pred])
-        f1 = f1_score(df[y_true], df[y_pred])
-        f1 = r2_score(df[y_true], df[y_pred])
-        print(f'accuracy: {accuracy}')
-        print(f'kappa: {kappa}')
-        print(f'f1: {f1}')
-        print(f'r2: {r2}')
-        return {}
+        kappa = cohen_kappa_score(
+            df[y_true],
+            df[y_pred],
+            # pos_label=1,
+            # average='micro'
+        )
+
+        f1 = f1_score(
+            df[y_true],
+            df[y_pred],
+            # pos_label=1,
+            average='micro'
+        )
+
+        r2 = r2_score(
+            df[y_true],
+            df[y_pred],
+            # pos_label=1,
+            # average='micro'
+        )
+
+        precision = precision_score(
+            df[y_true],
+            df[y_pred],
+            pos_label=1,
+            average='micro'
+        )
+
+        return {
+            'accuracy': accuracy,
+            'kappa': kappa,
+            'f1': f1,
+            'r2': r2,
+            'precision': precision
+        }

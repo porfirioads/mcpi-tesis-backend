@@ -14,7 +14,9 @@ dataset_service = DatasetService()
 @router.get('/pretrained', response_model=FileUpload)
 def pretrained(file_path: str):
     logger.debug('pretrained()')
-    df = dataset_service.prepare_dataset(file_path=file_path)
+    df = dataset_service.prepare_dataset(
+        file_path=f'uploads/cleaned/{file_path}'
+    )
 
     df_classified = analysis_service.classify_pretrained(
         df,
@@ -22,10 +24,19 @@ def pretrained(file_path: str):
         'sentiment'
     )
 
-    dataset_service.get_metrics(
-        df=df_classified,
+    return dataset_service.to_csv(df_classified, file_path)
+
+
+@router.get('/metrics')
+def metrics(file_path: str):
+    df = dataset_service.read_dataset(
+        file_path=f'uploads/classified/{file_path}',
+        encoding='utf-8',
+        delimiter=','
+    )
+
+    return dataset_service.get_metrics(
+        df=df,
         y_true='sentiment',
         y_pred='max_voting'
     )
-
-    return dataset_service.to_csv(df_classified, file_path)
