@@ -6,10 +6,7 @@ class Strings:
         snack = '_'.join(
             sub(
                 '([A-Z][a-z]+)', r' \1',
-                sub(
-                    '([A-Z]+)', r' \1',
-                    string.replace('-', ' ')
-                )
+                sub('([A-Z]+)', r' \1', string.replace('-', ' '))
             ).split()
         ).lower()
         snack = sub('_+', '_', snack)
