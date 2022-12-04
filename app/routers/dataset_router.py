@@ -57,5 +57,6 @@ def summary_dataset(file_path: str):
     return dataset_service.summary_dataset(
         file_path=file_path,
         encoding='utf-8',
-        delimiter='|'
+        delimiter='|',
+        target_column='sentiment'
     )

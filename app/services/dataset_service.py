@@ -80,11 +80,11 @@ class DatasetService(metaclass=SingletonMeta):
             filename=file_path
         )
 
-    def summary_dataset(self, file_path: str, encoding: str, delimiter) -> dict:
+    def summary_dataset(self, file_path: str, encoding: str, delimiter, target_column: str) -> dict:
         os.stat(f'uploads/cleaned/{file_path}')
         df = self.read_dataset(
             file_path=f'uploads/cleaned/{file_path}',
             encoding=encoding,
             delimiter=delimiter
         )
-        return df['sentiment'].value_counts().to_dict()
+        return df[target_column].value_counts().to_dict()
