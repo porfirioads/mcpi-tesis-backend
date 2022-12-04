@@ -4,7 +4,6 @@ from app.utils.singleton import SingletonMeta
 from nltk.sentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
-from typing import List
 import pandas as pd
 
 

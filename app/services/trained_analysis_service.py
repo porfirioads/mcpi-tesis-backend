@@ -1,5 +1,6 @@
 from app.utils.singleton import SingletonMeta
-from textblob.classifiers import MaxEntClassifier, DecisionTreeClassifier, NaiveBayesClassifier
+from textblob.classifiers import MaxEntClassifier, DecisionTreeClassifier, \
+    NaiveBayesClassifier
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from app.services.dataset_service import DatasetService

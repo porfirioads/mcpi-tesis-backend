@@ -7,7 +7,8 @@ from app.utils.strings import Strings
 from fastapi.responses import FileResponse
 from datetime import datetime
 import pandas as pd
-from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, \
+    precision_score, recall_score
 from collections import Counter
 
 
@@ -16,7 +17,12 @@ class DatasetService(metaclass=SingletonMeta):
         occurence_count = Counter(items)
         return occurence_count.most_common(1)[0][0]
 
-    def read_dataset(self, file_path: str, encoding: str, delimiter: str) -> pd.DataFrame:
+    def read_dataset(
+        self,
+        file_path: str,
+        encoding: str,
+        delimiter: str
+    ) -> pd.DataFrame:
         df = pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
         return df
 
@@ -71,7 +77,13 @@ class DatasetService(metaclass=SingletonMeta):
             filename=file_path
         )
 
-    def summary_dataset(self, file_path: str, encoding: str, delimiter, target_column: str) -> dict:
+    def summary_dataset(
+        self,
+        file_path: str,
+        encoding: str,
+        delimiter,
+        target_column: str
+    ) -> dict:
         os.stat(f'uploads/cleaned/{file_path}')
         df = self.read_dataset(
             file_path=f'uploads/cleaned/{file_path}',

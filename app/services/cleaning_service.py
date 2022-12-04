@@ -1,7 +1,6 @@
 import re
 from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
-from app.config import logger
 from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
 from datetime import datetime
@@ -60,8 +59,10 @@ class CleaningService(metaclass=SingletonMeta):
         acumulado_neg = 0
 
         # PASO 1: QUITAR URLS Y @
-        url = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-        url2 = '(www\.)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+        url = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|' + \
+            '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+        url2 = '(www\.)(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|' + \
+            '(?:%[0-9a-fA-F][0-9a-fA-F]))+'
         emoticons = "['\&\-\.\/()=:;]+"
         patron = re.compile(
             '_|•|-|#|@|[¿?]|' + url + '|' + url2 + '|' + emoticons)
@@ -160,14 +161,20 @@ class CleaningService(metaclass=SingletonMeta):
         # PASO 7: Generación de fila para dataset
         ten = minusculas.lower()
         can_pala = cantidad
-        new_row = f'{ten}|{can_pala}|{cc}|{vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|{jj}|' +\
-            f'{jjr}|{jjs}|{ls}|{md}|{nn}|{nns}|{nnp}|{nnps}|{pdt}|{posss}|' +\
-            f'{prp}|{rb}|{rbr}|{rp}|{to}|{uh}|{vb}|{vbd}|{vbg}|{vbn}|{vbz}|' +\
-            f'{wdt}|{wp}|{wps}|{wrb}|{palabras_pos}|{palabras_neg}|' +\
-            f'{acumulado_pos}|{acumulado_neg}|{Polari}|{cant_caracteres}\n'
+        new_row = f'{ten}|{can_pala}|{cc}|{vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|' + \
+            f'{jj}|{jjr}|{jjs}|{ls}|{md}|{nn}|{nns}|{nnp}|{nnps}|{pdt}|' +\
+            f'{posss}|{prp}|{rb}|{rbr}|{rp}|{to}|{uh}|{vb}|{vbd}|{vbg}|' +\
+            f'{vbn}|{vbz}|{wdt}|{wp}|{wps}|{wrb}|{palabras_pos}|' +\
+            f'{palabras_neg}|{acumulado_pos}|{acumulado_neg}|{Polari}|' +\
+            f'{cant_caracteres}\n'
         return new_row
 
-    def clean(self, file_path: str, encoding: str, delimiter: str) -> FileUpload:
+    def clean(
+        self,
+        file_path: str,
+        encoding: str,
+        delimiter: str
+    ) -> FileUpload:
         # Read original dataset
         original_file_path = f'uploads/{file_path}'
         original_df = self.dataset_service.read_dataset(
@@ -194,7 +201,8 @@ class CleaningService(metaclass=SingletonMeta):
 
         # Iterate answers to generate the new dataset
         for answer in answers:
-            row = f'{original_df[answer].value_counts().idxmax()}|{self.generate_clean_row(answer)}'
+            row = f'{original_df[answer].value_counts().idxmax()}|' + \
+                f'{self.generate_clean_row(answer)}'
             file.write(row)
 
         # End file writting
