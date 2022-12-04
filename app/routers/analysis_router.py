@@ -22,4 +22,10 @@ def pretrained(file_path: str):
         'sentiment'
     )
 
+    dataset_service.get_metrics(
+        df=df_classified,
+        y_true='sentiment',
+        y_pred='max_voting'
+    )
+
     return dataset_service.to_csv(df_classified, file_path)

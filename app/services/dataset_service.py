@@ -88,3 +88,24 @@ class DatasetService(metaclass=SingletonMeta):
             delimiter=delimiter
         )
         return df[target_column].value_counts().to_dict()
+
+    def get_metrics(self, df: pd.DataFrame, y_true: str, y_pred: str) -> dict:
+        for index, row in df.iterrows():
+            if row[y_true] == 1:
+                pass
+            elif row[y_true] == 0:
+                pass
+            elif row[y_true] == -1:
+                pass
+
+        from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score
+
+        accuracy = accuracy_score(df[y_true], df[y_pred])
+        kappa = cohen_kappa_score(df[y_true], df[y_pred])
+        f1 = f1_score(df[y_true], df[y_pred])
+        f1 = r2_score(df[y_true], df[y_pred])
+        print(f'accuracy: {accuracy}')
+        print(f'kappa: {kappa}')
+        print(f'f1: {f1}')
+        print(f'r2: {r2}')
+        return {}
