@@ -35,13 +35,13 @@ def upload_dataset(file: UploadFile = File()):
     return dataset_service.upload_dataset(file)
 
 
-@router.get('/download')
+@router.post('/download')
 def download_dataset(file_path: str):
     logger.debug('download_dataset()')
     return dataset_service.download_dataset(file_path)
 
 
-@router.get('/clean', response_model=FileUpload)
+@router.post('/clean', response_model=FileUpload)
 def clean_dataset(file_path: str):
     logger.debug('clean_dataset()')
     return cleaning_service.clean(
@@ -51,7 +51,7 @@ def clean_dataset(file_path: str):
     )
 
 
-@router.get('/summary')
+@router.post('/summary')
 def summary_dataset(file_path: str):
     logger.debug('summary_dataset()')
     return dataset_service.summary_dataset(

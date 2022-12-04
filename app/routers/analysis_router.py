@@ -11,9 +11,10 @@ analysis_service = PretrainedAnalysisService()
 dataset_service = DatasetService()
 
 
-@router.get('/pretrained', response_model=FileUpload)
+@router.post('/pretrained', response_model=FileUpload)
 def pretrained(file_path: str):
     logger.debug('pretrained()')
+
     df = dataset_service.prepare_dataset(
         file_path=f'uploads/cleaned/{file_path}'
     )
@@ -24,10 +25,21 @@ def pretrained(file_path: str):
         'sentiment'
     )
 
-    return dataset_service.to_csv(df_classified, file_path)
+    return dataset_service.to_csv(
+        df_classified,
+        f'uploads/classified/{file_path}'
+    )
 
 
-@router.get('/metrics')
+def trained_textblob(file_path: str):
+    logger.debug('trained_textblob()')
+
+    df = dataset_service.prepare_dataset(
+        file_path=f'uploads/cleaned/{file_path}'
+    )
+
+
+@router.post('/metrics')
 def metrics(file_path: str):
     df = dataset_service.read_dataset(
         file_path=f'uploads/classified/{file_path}',

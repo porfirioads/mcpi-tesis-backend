@@ -7,7 +7,7 @@ from app.utils.strings import Strings
 from fastapi.responses import FileResponse
 from datetime import datetime
 import pandas as pd
-from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score, precision_score
+from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score, precision_score, recall_score
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -37,9 +37,11 @@ class DatasetService(metaclass=SingletonMeta):
         file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
         df.to_csv(
-            f'uploads/classified/{file_path}',
+            file_path,
             index=False
         )
+
+        file_path = file_path.split('/')[-1]
 
         return FileUpload(file_path=file_path)
 
@@ -134,10 +136,18 @@ class DatasetService(metaclass=SingletonMeta):
             average='micro'
         )
 
+        recall = recall_score(
+            df[y_true],
+            df[y_pred],
+            pos_label=1,
+            average='micro'
+        )
+
         return {
             'accuracy': accuracy,
             'kappa': kappa,
             'f1': f1,
             'r2': r2,
-            'precision': precision
+            'precision': precision,
+            'recall': recall
         }
