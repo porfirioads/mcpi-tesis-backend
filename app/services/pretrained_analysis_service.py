@@ -1,10 +1,8 @@
 
 from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
-from collections import Counter
 from nltk.sentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
-from textblob.classifiers import MaxEntClassifier, DecisionTreeClassifier, NaiveBayesClassifier, PositiveNaiveBayesClassifier
 from textblob.sentiments import NaiveBayesAnalyzer
 from typing import List
 import pandas as pd
@@ -14,9 +12,22 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
     sia = SentimentIntensityAnalyzer()
     dataset_service = DatasetService()
 
-    def most_frequent(self, items: List):
-        occurence_count = Counter(items)
-        return occurence_count.most_common(1)[0][0]
+    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
+        df = self.dataset_service.read_dataset(
+            file_path=file_path,
+            encoding='utf-8',
+            delimiter='|'
+        )
+
+        df['sentiment'] = df['sentiment'].replace(
+            {
+                'Positivo': '1',
+                'Negativo': '-1',
+                'Neutral': '0'
+            }
+        )
+
+        return df
 
     def get_vader_score(self, text: str) -> int:
         score = self.sia.polarity_scores(text)['compound']
@@ -39,7 +50,7 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
 
         return - neg_score
 
-    def classify_pretrained(
+    def classify(
         self,
         df: pd.DataFrame,
         text_column: str,
@@ -72,7 +83,7 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
                 scores[0],
                 scores[1],
                 scores[2],
-                self.most_frequent(scores)
+                self.dataset_service.most_frequent(scores)
             ])
 
         return pd.DataFrame(

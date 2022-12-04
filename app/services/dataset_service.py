@@ -8,28 +8,16 @@ from fastapi.responses import FileResponse
 from datetime import datetime
 import pandas as pd
 from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, r2_score, precision_score, recall_score
+from collections import Counter
 
 
 class DatasetService(metaclass=SingletonMeta):
+    def most_frequent(self, items: List):
+        occurence_count = Counter(items)
+        return occurence_count.most_common(1)[0][0]
+
     def read_dataset(self, file_path: str, encoding: str, delimiter: str) -> pd.DataFrame:
         df = pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
-        return df
-
-    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
-        df = self.read_dataset(
-            file_path=file_path,
-            encoding='utf-8',
-            delimiter='|'
-        )
-
-        df['sentiment'] = df['sentiment'].replace(
-            {
-                'Positivo': '1',
-                'Negativo': '-1',
-                'Neutral': '0'
-            }
-        )
-
         return df
 
     def to_csv(self, df: pd.DataFrame, file_path: str) -> FileUpload:
@@ -122,13 +110,6 @@ class DatasetService(metaclass=SingletonMeta):
             average='micro'
         )
 
-        r2 = r2_score(
-            df[y_true],
-            df[y_pred],
-            # pos_label=1,
-            # average='micro'
-        )
-
         precision = precision_score(
             df[y_true],
             df[y_pred],
@@ -147,7 +128,6 @@ class DatasetService(metaclass=SingletonMeta):
             'accuracy': accuracy,
             'kappa': kappa,
             'f1': f1,
-            'r2': r2,
             'precision': precision,
             'recall': recall
         }
