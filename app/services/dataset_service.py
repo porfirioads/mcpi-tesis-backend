@@ -48,13 +48,13 @@ class DatasetService(metaclass=SingletonMeta):
         snack_name = Strings.to_snack_case(file.filename)
         file_path = f'{snack_name[0: -4]}_{timestamp}.csv'
 
-        with open(f'uploads/{file_path}', 'wb') as f:
+        with open(f'resources/uploads/{file_path}', 'wb') as f:
             f.write(file.file.read())
 
         return FileUpload(file_path=file_path)
 
-    def get_datasets_list(self, path: str = None) -> List[FileUpload]:
-        files = os.listdir(f'uploads/{path}' if path else 'uploads')
+    def get_datasets_list(self, path: str) -> List[FileUpload]:
+        files = os.listdir(f'resources/{path}')
 
         if '.gitkeep' in files:
             files.remove('.gitkeep')
@@ -70,9 +70,9 @@ class DatasetService(metaclass=SingletonMeta):
         ]
 
     def download_dataset(self, file_path: str) -> FileResponse:
-        os.stat(f'uploads/{file_path}')
+        os.stat(f'resources/{file_path}')
         return FileResponse(
-            path=f'uploads/{file_path}',
+            path=f'resources/{file_path}',
             media_type='text/csv',
             filename=file_path
         )
@@ -84,9 +84,9 @@ class DatasetService(metaclass=SingletonMeta):
         delimiter,
         target_column: str
     ) -> dict:
-        os.stat(f'uploads/cleaned/{file_path}')
+        os.stat(f'resources/cleaned/{file_path}')
         df = self.read_dataset(
-            file_path=f'uploads/cleaned/{file_path}',
+            file_path=f'resources/cleaned/{file_path}',
             encoding=encoding,
             delimiter=delimiter
         )

@@ -176,7 +176,7 @@ class CleaningService(metaclass=SingletonMeta):
         delimiter: str
     ) -> FileUpload:
         # Read original dataset
-        original_file_path = f'uploads/{file_path}'
+        original_file_path = f'resources/uploads/{file_path}'
         original_df = self.dataset_service.read_dataset(
             original_file_path,
             encoding,
@@ -188,7 +188,8 @@ class CleaningService(metaclass=SingletonMeta):
         file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
         # Open file in write mode
-        file = open(f'uploads/cleaned/{file_path}', 'w', encoding=encoding)
+        file = open(
+            f'resources/cleaned/{file_path}', 'w', encoding=encoding)
 
         # Header columns generation
         headers = f'sentiment|answer|{"|".join(GENERATED_COLUMNS)}\n'

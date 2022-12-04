@@ -17,7 +17,7 @@ def pretrained(file_path: str):
     logger.debug('pretrained()')
 
     df = pretrained_analysis_service.prepare_dataset(
-        file_path=f'uploads/cleaned/{file_path}'
+        file_path=f'resources/cleaned/{file_path}'
     )
 
     df_classified = pretrained_analysis_service.classify(
@@ -28,7 +28,7 @@ def pretrained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'uploads/classified/pretrained_{file_path}'
+        f'resources/classified/pretrained_{file_path}'
     )
 
 
@@ -37,7 +37,7 @@ def trained(file_path: str):
     logger.debug('trained()')
 
     df = trained_analysis_service.prepare_dataset(
-        file_path=f'uploads/cleaned/{file_path}'
+        file_path=f'resources/cleaned/{file_path}'
     )
 
     df_classified = trained_analysis_service.classify(
@@ -48,14 +48,14 @@ def trained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'uploads/classified/trained_{file_path}'
+        f'resources/classified/trained_{file_path}'
     )
 
 
 @router.post('/metrics')
 def metrics(file_path: str):
     df = dataset_service.read_dataset(
-        file_path=f'uploads/classified/{file_path}',
+        file_path=f'resources/classified/{file_path}',
         encoding='utf-8',
         delimiter=','
     )

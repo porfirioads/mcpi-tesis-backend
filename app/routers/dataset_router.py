@@ -14,7 +14,7 @@ cleaning_service = CleaningService()
 @router.get('/', response_model=List[FileUpload])
 def get_dataset_list():
     logger.debug('get_dataset_list()')
-    return dataset_service.get_datasets_list()
+    return dataset_service.get_datasets_list(path='uploads')
 
 
 @router.get('/cleaned', response_model=List[FileUpload])

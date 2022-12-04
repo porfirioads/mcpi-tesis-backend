@@ -195,8 +195,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-/uploads/*
-!/uploads/.gitkeep
+/resources/uploads/*
+!/resources/uploads/.gitkeep
 /models/*
 !/models/.gitkeep
 
@@ -268,11 +268,11 @@ baseline.json
 !.vscode/extensions.json
 
 # Uploaded datsets
-uploads/*
-!uploads/.gitkeep
-!uploads/cleaned
-uploads/cleaned/*
-!uploads/cleaned/.gitkeep
-!uploads/classified
-uploads/classified/*
-!uploads/classified/.gitkeep
+resources/uploads/*
+!resources/uploads/.gitkeep
+!resources/cleaned
+resources/cleaned/*
+!resources/cleaned/.gitkeep
+!resources/classified
+resources/classified/*
+!resources/classified/.gitkeep
