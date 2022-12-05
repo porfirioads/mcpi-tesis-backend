@@ -127,45 +127,49 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         self.train_models()
         data = []
 
-        for index, row in df.iterrows():
-            print(f'classifying item {index + 1} of {len(df)}')
-            text = row[text_column]
-            sentiment = row[target_column]
+        for classifier in classifiers:
+            self.execute_algorithm(
+                classifier, self.X_train, self.X_test, self.y_train, self.y_test)
 
-            scores = [
-                classifiers['nearest_neighbors'].classify(text),
-                classifiers['linear_svm'].classify(text),
-                classifiers['rbf_svm'].classify(text),
-                classifiers['gaussian_process'].classify(text),
-                classifiers['decision_tree'].classify(text),
-                classifiers['random_forest'].classify(text),
-                classifiers['neural_net'].classify(text),
-                classifiers['ada_boost'].classify(text),
-                classifiers['naive_bayes'].classify(text),
-                classifiers['qda'].classify(text),
-                classifiers['gradient_boosting'].classify(text),
-                classifiers['logistic_regression'].classify(text),
-                classifiers['stochastic_gradient_descent'].classify(text),
-            ]
+        # for index, row in df.iterrows():
+        #     print(f'classifying item {index + 1} of {len(df)}')
+        #     text = row[text_column]
+        #     sentiment = row[target_column]
 
-            data.append([
-                text,
-                sentiment,
-                scores[0],
-                scores[1],
-                scores[2],
-                scores[3],
-                scores[4],
-                scores[5],
-                scores[6],
-                scores[7],
-                scores[8],
-                scores[9],
-                scores[10],
-                scores[11],
-                scores[12],
-                self.dataset_service.most_frequent(scores)
-            ])
+        #     scores = [
+        #         classifiers['nearest_neighbors'].classify(text),
+        #         classifiers['linear_svm'].classify(text),
+        #         classifiers['rbf_svm'].classify(text),
+        #         classifiers['gaussian_process'].classify(text),
+        #         classifiers['decision_tree'].classify(text),
+        #         classifiers['random_forest'].classify(text),
+        #         classifiers['neural_net'].classify(text),
+        #         classifiers['ada_boost'].classify(text),
+        #         classifiers['naive_bayes'].classify(text),
+        #         classifiers['qda'].classify(text),
+        #         classifiers['gradient_boosting'].classify(text),
+        #         classifiers['logistic_regression'].classify(text),
+        #         classifiers['stochastic_gradient_descent'].classify(text),
+        #     ]
+
+        #     data.append([
+        #         text,
+        #         sentiment,
+        #         scores[0],
+        #         scores[1],
+        #         scores[2],
+        #         scores[3],
+        #         scores[4],
+        #         scores[5],
+        #         scores[6],
+        #         scores[7],
+        #         scores[8],
+        #         scores[9],
+        #         scores[10],
+        #         scores[11],
+        #         scores[12],
+        #         self.dataset_service.most_frequent(scores)
+        #     ])
 
         return pd.DataFrame(
             data,
