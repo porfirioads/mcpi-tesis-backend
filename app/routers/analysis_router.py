@@ -4,11 +4,13 @@ from app.services.dataset_service import DatasetService
 from app.services.pretrained_analysis_service import PretrainedAnalysisService
 from app.config import logger
 from app.services.trained_analysis_service import TrainedAnalysisService
+from app.services.custom_analysis_service import CustomAnalysisService
 
 router = APIRouter(prefix='/analysis', tags=['Analysis'])
 
 pretrained_analysis_service = PretrainedAnalysisService()
 trained_analysis_service = TrainedAnalysisService()
+custom_analysis_service = CustomAnalysisService()
 dataset_service = DatasetService()
 
 
@@ -17,7 +19,9 @@ def pretrained(file_path: str):
     logger.debug('pretrained()')
 
     df = pretrained_analysis_service.prepare_dataset(
-        file_path=f'resources/cleaned/{file_path}'
+        file_path=f'resources/cleaned/{file_path}',
+        text_column='answer',
+        target_column='sentiment'
     )
 
     df_classified = pretrained_analysis_service.classify(
@@ -37,7 +41,9 @@ def trained(file_path: str):
     logger.debug('trained()')
 
     df = trained_analysis_service.prepare_dataset(
-        file_path=f'resources/cleaned/{file_path}'
+        file_path=f'resources/cleaned/{file_path}',
+        text_column='answer',
+        target_column='sentiment'
     )
 
     df_classified = trained_analysis_service.classify(
@@ -49,6 +55,28 @@ def trained(file_path: str):
     return dataset_service.to_csv(
         df_classified,
         f'resources/classified/trained_{file_path}'
+    )
+
+
+@router.post('/custom', response_model=FileUpload)
+def custom(file_path: str):
+    logger.debug('custom()')
+
+    df = custom_analysis_service.prepare_dataset(
+        file_path=f'resources/cleaned/{file_path}',
+        text_column='answer',
+        target_column='sentiment'
+    )
+
+    df_classified = custom_analysis_service.classify(
+        df,
+        'answer',
+        'sentiment'
+    )
+
+    return dataset_service.to_csv(
+        df_classified,
+        f'resources/classified/custom_{file_path}'
     )
 
 

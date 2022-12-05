@@ -2,14 +2,18 @@ from app.utils.singleton import SingletonMeta
 from textblob.classifiers import MaxEntClassifier, DecisionTreeClassifier, \
     NaiveBayesClassifier
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from app.services.dataset_service import DatasetService
 
 
 class TrainedAnalysisService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
 
-    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
+    def prepare_dataset(
+        self,
+        file_path: str,
+        text_column: str,
+        target_column: str
+    ) -> pd.DataFrame:
         df = self.dataset_service.read_dataset(
             file_path=file_path,
             encoding='utf-8',
@@ -24,17 +28,9 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
             }
         )
 
+        df = df[[text_column, target_column]]
+
         return df
-
-    def split_dataset(self, df: pd.DataFrame, y_true: str):
-        y = df[y_true]
-
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            df,
-            y,
-            test_size=0.25,
-            random_state=1
-        )
 
     def train_models(self):
         self.dtcl = DecisionTreeClassifier(self.X_train.values)
@@ -50,13 +46,13 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
         text_column: str,
         target_column: str
     ) -> pd.DataFrame:
-        new_df = df[[text_column, target_column]]
-        self.split_dataset(new_df, 'sentiment')
+        self.X_train, self.X_test, self.y_train, self.ﬂy_test = \
+            self.dataset_service.split_dataset(df, 'sentiment')
         self.train_models()
         data = []
 
-        for index, row in new_df.iterrows():
-            print(f'classifying item {index + 1} of {len(new_df)}')
+        for index, row in df.iterrows():
+            print(f'classifying item {index + 1} of {len(df)}')
             text = row[text_column]
             sentiment = row[target_column]
 

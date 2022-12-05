@@ -11,14 +11,19 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
     sia = SentimentIntensityAnalyzer()
     dataset_service = DatasetService()
 
-    def prepare_dataset(self, file_path: str) -> pd.DataFrame:
+    def prepare_dataset(
+        self,
+        file_path: str,
+        text_column: str,
+        target_column: str
+    ) -> pd.DataFrame:
         df = self.dataset_service.read_dataset(
             file_path=file_path,
             encoding='utf-8',
             delimiter='|'
         )
 
-        df['sentiment'] = df['sentiment'].replace(
+        df[target_column] = df[target_column].replace(
             {
                 'Positivo': '1',
                 'Negativo': '-1',

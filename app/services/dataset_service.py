@@ -10,6 +10,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, \
     precision_score, recall_score
 from collections import Counter
+from sklearn.model_selection import train_test_split
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -25,6 +26,18 @@ class DatasetService(metaclass=SingletonMeta):
     ) -> pd.DataFrame:
         df = pd.read_csv(file_path, encoding=encoding, delimiter=delimiter)
         return df
+
+    def split_dataset(self, df: pd.DataFrame, y_true: str) -> tuple:
+        y = df[y_true]
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            df,
+            y,
+            test_size=0.25,
+            random_state=1
+        )
+
+        return (X_train, X_test, y_train, y_test)
 
     def to_csv(self, df: pd.DataFrame, file_path: str) -> FileUpload:
         timestamp = int(datetime.timestamp(datetime.now()))
@@ -139,7 +152,7 @@ class DatasetService(metaclass=SingletonMeta):
         return {
             'accuracy': accuracy,
             'kappa': kappa,
-            'f1': f1,
-            'precision': precision,
-            'recall': recall
+            'f1': f1,  # Promedio de la precisión
+            'precision': precision,  # Cuantos son relevantes
+            'recall': recall  # Cuantos son seleccionados
         }
