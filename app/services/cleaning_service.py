@@ -1,5 +1,6 @@
 import re
 from app.services.dataset_service import DatasetService
+from app.services.phrase_replacer_service import PhraseReplacerService
 from app.utils.singleton import SingletonMeta
 from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
@@ -16,6 +17,7 @@ GENERATED_COLUMNS = [
 
 class CleaningService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
+    phrase_replacer_service = PhraseReplacerService()
 
     def generate_clean_row(self, text: str) -> str:
         cc = 0  # Conjunción de coordinación
@@ -202,9 +204,13 @@ class CleaningService(metaclass=SingletonMeta):
 
         # Iterate answers to generate the new dataset
         for answer in answers:
-            row = f'{original_df[answer].value_counts().idxmax()}|' + \
-                f'{self.generate_clean_row(answer)}'
+            sentiment = original_df[answer].value_counts().idxmax()
+            clean_row = self.generate_clean_row(answer)
+            row = f'{clean_row}|{clean_row}'
             file.write(row)
+            synonym_answer = self.phrase_replacer_service.extract_synonyms(
+                answer
+            )
 
         # End file writting
         file.close()
