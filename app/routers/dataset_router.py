@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, File, UploadFile
 from app.schemas.common_schemas import FileUpload
+from app.services.balance_service import BalanceService
 from app.services.cleaning_service import CleaningService
 from app.services.dataset_service import DatasetService
 from app.config import logger
@@ -9,6 +10,7 @@ router = APIRouter(prefix='/datasets', tags=['Datasets'])
 
 dataset_service = DatasetService()
 cleaning_service = CleaningService()
+balance_service = BalanceService()
 
 
 @router.get('/', response_model=List[FileUpload])
@@ -27,6 +29,12 @@ def get_cleaned_dataset_list():
 def get_classified_dataset_list():
     logger.debug('get_classified_dataset_list()')
     return dataset_service.get_datasets_list(path='classified')
+
+
+@router.get('/balanced', response_model=List[FileUpload])
+def get_balanced_dataset_list():
+    logger.debug('get_balanced_dataset_list()')
+    return dataset_service.get_datasets_list(path='balanced')
 
 
 @router.post('/upload', response_model=FileUpload)
@@ -48,6 +56,16 @@ def clean_dataset(file_path: str):
         file_path=file_path,
         encoding='utf-8',
         delimiter=','
+    )
+
+
+@router.post('/balance', response_model=FileUpload)
+def balance_dataset(file_path: str):
+    logger.debug('balance_dataset()')
+    return balance_service.balance(
+        file_path=file_path,
+        encoding='utf-8',
+        delimiter='|'
     )
 
 

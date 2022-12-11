@@ -177,11 +177,10 @@ class CleaningService(metaclass=SingletonMeta):
         delimiter: str
     ) -> FileUpload:
         # Read original dataset
-        original_file_path = f'resources/uploads/{file_path}'
         original_df = self.dataset_service.read_dataset(
-            original_file_path,
-            encoding,
-            delimiter
+            file_path=f'resources/uploads/{file_path}',
+            encoding=encoding,
+            delimiter=delimiter
         )
 
         # New dataset file name
