@@ -5,6 +5,7 @@ from app.utils.singleton import SingletonMeta
 from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
 from datetime import datetime
+from app.config import logger
 
 GENERATED_COLUMNS = [
     'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw', 'inn', 'jj', 'jjr', 'jjs',
@@ -38,10 +39,8 @@ class CleaningService(metaclass=SingletonMeta):
         pdt = 0  # Predeterminado
         posss = 0  # Posesivo
         prp = 0  # Pronombre personal
-        # PrP = 0  # PRP$ Pronombre posesivo
         rb = 0  # RB Adverbio
         rbr = 0  # Adverbio comparativo
-        # rbs? # Adverbio superlativo
         rp = 0  # Particular
         to = 0  # Particular de infinitivo
         uh = 0  # Interjección
@@ -206,11 +205,13 @@ class CleaningService(metaclass=SingletonMeta):
         for answer in answers:
             sentiment = original_df[answer].value_counts().idxmax()
             clean_row = self.generate_clean_row(answer)
-            row = f'{clean_row}|{clean_row}'
+            row = f'{sentiment}|{clean_row}'
             file.write(row)
             synonym_answer = self.phrase_replacer_service.extract_synonyms(
                 answer
             )
+            logger.info(f'ANSWER: {answer}')
+            logger.info(f'SYNONYM: {synonym_answer}')
 
         # End file writting
         file.close()
