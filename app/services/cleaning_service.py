@@ -7,12 +7,12 @@ from textblob import TextBlob
 from datetime import datetime
 from app.config import logger
 
-GENERATED_COLUMNS = [
-    'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw', 'inn', 'jj', 'jjr', 'jjs',
-    'ls', 'md', 'nn', 'nns', 'nnp', 'nnps', 'pdt', 'posss', 'prp', 'rb', 'rbr',
-    'rp', 'to', 'uh', 'vb', 'vbd', 'vbg', 'vbn', 'vbz', 'wdt', 'wp', 'wps',
-    'wrb', 'pos_length', 'neg_length', 'pos_acumulado', 'neg_acumulado',
-    'polarity', 'cant_caracteres'
+HEADERS = [
+    'sentiment', 'answer', 'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw',
+    'inn', 'jj', 'jjr', 'jjs', 'ls', 'md', 'nn', 'nns', 'nnp', 'nnps', 'pdt',
+    'posss', 'prp', 'rb', 'rbr', 'rp', 'to', 'uh', 'vb', 'vbd', 'vbg', 'vbn',
+    'vbz', 'wdt', 'wp', 'wps', 'wrb', 'pos_length', 'neg_length',
+    'pos_acumulado', 'neg_acumulado', 'polarity', 'cant_caracteres'
 ]
 
 
@@ -187,25 +187,29 @@ class CleaningService(metaclass=SingletonMeta):
         timestamp = int(datetime.timestamp(datetime.now()))
         file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
-        # Open file in write mode
-        file = open(
-            f'resources/cleaned/{file_path}', 'w', encoding=encoding)
+        # # Open file in write mode
+        # file = open(
+        #     f'resources/cleaned/{file_path}', 'w', encoding=encoding)
 
         # Header columns generation
-        headers = f'sentiment|answer|{"|".join(GENERATED_COLUMNS)}\n'
+        # headers = f'sentiment|answer|{"|".join(HEADERS)}\n'
 
-        # Write header columns
-        file.write(headers)
+        # # Write header columns
+        # file.write(headers)
 
         # Get the columns that contains answers
         answers = original_df.columns[3:].to_list()
 
+        # TODO: Fill the data
+        # data = []
+
         # Iterate answers to generate the new dataset
         for answer in answers:
-            sentiment = original_df[answer].value_counts().idxmax()
-            clean_row = self.generate_clean_row(answer)
-            row = f'{sentiment}|{clean_row}'
-            file.write(row)
+            # sentiment = original_df[answer].value_counts().idxmax()
+            # clean_row = self.calculate_data_fields(answer)
+            # TODO: Add sentiment and answer to data
+            # row = f'{sentiment}|{clean_row}'
+            # file.write(row)
             synonym_answer = self.phrase_replacer_service.extract_synonyms(
                 answer
             )
@@ -213,6 +217,6 @@ class CleaningService(metaclass=SingletonMeta):
             logger.info(f'SYNONYM: {synonym_answer}')
 
         # End file writting
-        file.close()
+        # file.close()
 
         return FileUpload(file_path=file_path)
