@@ -20,7 +20,7 @@ class CleaningService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
     phrase_replacer_service = PhraseReplacerService()
 
-    def generate_clean_row(self, text: str) -> str:
+    def calculate_data_fields(self, text: str) -> list:
         cc = 0  # Conjunción de coordinación
         cd = 0  # Dígito cardinal
         dt = 0  # Determinador
@@ -154,7 +154,7 @@ class CleaningService(metaclass=SingletonMeta):
         cantidad = len(palabras)
 
         # PASO 5: A. Sentimiento
-        Polari = minusculas.sentiment.polarity
+        polari = minusculas.sentiment.polarity
 
         # PASO 6: Cantidad de caracteres
         cant_caracteres = len(text)
@@ -162,13 +162,13 @@ class CleaningService(metaclass=SingletonMeta):
         # PASO 7: Generación de fila para dataset
         ten = minusculas.lower()
         can_pala = cantidad
-        new_row = f'{ten}|{can_pala}|{cc}|{vbp}|{cd}|{dt}|{ex}|{fw}|{inn}|' + \
-            f'{jj}|{jjr}|{jjs}|{ls}|{md}|{nn}|{nns}|{nnp}|{nnps}|{pdt}|' +\
-            f'{posss}|{prp}|{rb}|{rbr}|{rp}|{to}|{uh}|{vb}|{vbd}|{vbg}|' +\
-            f'{vbn}|{vbz}|{wdt}|{wp}|{wps}|{wrb}|{palabras_pos}|' +\
-            f'{palabras_neg}|{acumulado_pos}|{acumulado_neg}|{Polari}|' +\
-            f'{cant_caracteres}\n'
-        return new_row
+
+        return [
+            ten, can_pala, cc, vbp, cd, dt, ex, fw, inn, jj, jjr, jjs, ls, md,
+            nn, nns, nnp, nnps, pdt, posss, prp, rb, rbr, rp, to, uh, vb, vbd,
+            vbg, vbn, vbz, wdt, wp, wps, wrb, palabras_pos, palabras_neg,
+            acumulado_pos, acumulado_neg, polari, cant_caracteres
+        ]
 
     def clean(
         self,
