@@ -52,10 +52,16 @@ def download_dataset(file_path: str):
 @router.post('/clean', response_model=FileUpload)
 def clean_dataset(file_path: str):
     logger.debug('clean_dataset()')
-    return cleaning_service.clean(
+
+    df_cleaned = cleaning_service.clean(
         file_path=file_path,
         encoding='utf-8',
         delimiter=','
+    )
+
+    return dataset_service.to_csv(
+        df=df_cleaned,
+        file_path=f'resources/cleaned/{file_path}'
     )
 
 
@@ -65,7 +71,7 @@ def balance_dataset(file_path: str):
     return balance_service.balance(
         file_path=file_path,
         encoding='utf-8',
-        delimiter='|'
+        delimiter=','
     )
 
 
@@ -75,6 +81,6 @@ def summary_dataset(file_path: str):
     return dataset_service.summary_dataset(
         file_path=file_path,
         encoding='utf-8',
-        delimiter='|',
+        delimiter=',',
         target_column='sentiment'
     )

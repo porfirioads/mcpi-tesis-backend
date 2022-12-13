@@ -6,6 +6,7 @@ from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
 from datetime import datetime
 from app.config import logger
+import pandas as pd
 
 HEADERS = [
     'sentiment', 'answer', 'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw',
@@ -18,7 +19,6 @@ HEADERS = [
 
 class CleaningService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
-    phrase_replacer_service = PhraseReplacerService()
 
     def calculate_data_fields(self, text: str) -> list:
         cc = 0  # Conjunción de coordinación
@@ -175,7 +175,7 @@ class CleaningService(metaclass=SingletonMeta):
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> FileUpload:
+    ) -> pd.DataFrame:
         # Read original dataset
         original_df = self.dataset_service.read_dataset(
             file_path=f'resources/uploads/{file_path}',
@@ -187,36 +187,19 @@ class CleaningService(metaclass=SingletonMeta):
         timestamp = int(datetime.timestamp(datetime.now()))
         file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
-        # # Open file in write mode
-        # file = open(
-        #     f'resources/cleaned/{file_path}', 'w', encoding=encoding)
-
-        # Header columns generation
-        # headers = f'sentiment|answer|{"|".join(HEADERS)}\n'
-
-        # # Write header columns
-        # file.write(headers)
-
         # Get the columns that contains answers
         answers = original_df.columns[3:].to_list()
 
-        # TODO: Fill the data
-        # data = []
+        # Variable where rows will be stored
+        data = []
 
         # Iterate answers to generate the new dataset
         for answer in answers:
-            # sentiment = original_df[answer].value_counts().idxmax()
-            # clean_row = self.calculate_data_fields(answer)
-            # TODO: Add sentiment and answer to data
-            # row = f'{sentiment}|{clean_row}'
-            # file.write(row)
-            synonym_answer = self.phrase_replacer_service.extract_synonyms(
-                answer
-            )
-            logger.info(f'ANSWER: {answer}')
-            logger.info(f'SYNONYM: {synonym_answer}')
+            sentiment = original_df[answer].value_counts().idxmax()
+            clean_data = self.calculate_data_fields(answer)
+            data.append([sentiment] + clean_data)
 
-        # End file writting
-        # file.close()
-
-        return FileUpload(file_path=file_path)
+        return pd.DataFrame(
+            data,
+            columns=HEADERS
+        )

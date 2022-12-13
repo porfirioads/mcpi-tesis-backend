@@ -17,7 +17,7 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
         df = self.dataset_service.read_dataset(
             file_path=file_path,
             encoding='utf-8',
-            delimiter='|'
+            delimiter=','
         )
 
         df['sentiment'] = df['sentiment'].replace(
