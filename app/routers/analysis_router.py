@@ -36,6 +36,28 @@ def pretrained(file_path: str):
     )
 
 
+@router.post('/trained_evaluation', response_model=FileUpload)
+def trained(file_path: str):
+    logger.debug('trained()')
+
+    df = trained_analysis_service.prepare_dataset(
+        file_path=f'resources/cleaned/{file_path}',
+        text_column='answer',
+        target_column='sentiment'
+    )
+
+    df_classified = trained_analysis_service.classify_for_evaluation(
+        df,
+        'answer',
+        'sentiment'
+    )
+
+    return dataset_service.to_csv(
+        df_classified,
+        f'resources/classified/trained_evaluation_{file_path}'
+    )
+
+
 @router.post('/trained', response_model=FileUpload)
 def trained(file_path: str):
     logger.debug('trained()')
@@ -54,11 +76,33 @@ def trained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/trained_{file_path}'
+        f'resources/classified/trained_evaluation_{file_path}'
     )
 
 
 @router.post('/custom', response_model=FileUpload)
+def custom(file_path: str):
+    logger.debug('custom()')
+
+    df = custom_analysis_service.prepare_dataset(
+        file_path=f'resources/cleaned/{file_path}',
+        text_column='answer',
+        target_column='sentiment'
+    )
+
+    df_classified = custom_analysis_service.classify_for_evaluation(
+        df,
+        'answer',
+        'sentiment'
+    )
+
+    return dataset_service.to_csv(
+        df_classified,
+        f'resources/classified/custom_{file_path}'
+    )
+
+
+@router.post('/custom_evaluation', response_model=FileUpload)
 def custom(file_path: str):
     logger.debug('custom()')
 
