@@ -1,6 +1,6 @@
 from typing import List
 from app.schemas.common_schemas import FileUpload
-from app.services.cleaning_service import CleaningService
+from app.services.cleaning_service import HEADERS, CleaningService
 from app.services.dataset_service import DatasetService
 from app.services.phrase_replacer_service import PhraseReplacerService
 from app.utils.singleton import SingletonMeta
@@ -35,7 +35,7 @@ class BalanceService(metaclass=SingletonMeta):
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> FileUpload:
+    ) -> pd.DataFrame:
         # Read source dataset.
         df = self.dataset_service.read_dataset(
             file_path=f'resources/cleaned/{file_path}',
@@ -43,7 +43,7 @@ class BalanceService(metaclass=SingletonMeta):
             delimiter=delimiter
         )
 
-        # Negative and neutral answers are now considered as Nega
+        # Negative and neutral answers are now considered as negative
         df = self.join_categories(
             df=df,
             source_column='sentiment',
@@ -57,19 +57,27 @@ class BalanceService(metaclass=SingletonMeta):
         missing_negatives = frequencies['Positivo'] - frequencies['Negativo']
         negatives = df[df['sentiment'] == 'Negativo']
 
-        for negative, index in negatives.iterrows():
+        # Variable where rows will be stored
+        data = []
+
+        for index, row in negatives.iterrows():
+            answer = row['answer']
+
             synonym_phrase = self.phrase_replacer_service.extract_synonyms(
-                negative
+                answer
             )
 
-            logger.debug(synonym_phrase)
+            row_data = self.cleaning_service.calculate_data_fields(
+                synonym_phrase
+            )
 
-            # TODO: Add phrase to the dataset
+            data.append(['Negativo'] + row_data)
+
             missing_negatives = missing_negatives - 1
 
             if not missing_negatives:
                 break
 
-        # New dataset file name
-        timestamp = int(datetime.timestamp(datetime.now()))
-        file_path = f'{file_path[0: -4]}_{timestamp}.csv'
+        df = df.append(pd.DataFrame(data, columns=HEADERS))
+
+        return df

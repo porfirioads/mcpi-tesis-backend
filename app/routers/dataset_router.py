@@ -68,10 +68,16 @@ def clean_dataset(file_path: str):
 @router.post('/balance', response_model=FileUpload)
 def balance_dataset(file_path: str):
     logger.debug('balance_dataset()')
-    return balance_service.balance(
+
+    df_balanced = balance_service.balance(
         file_path=file_path,
         encoding='utf-8',
         delimiter=','
+    )
+
+    return dataset_service.to_csv(
+        df=df_balanced,
+        file_path=f'resources/balanced/{file_path}'
     )
 
 
