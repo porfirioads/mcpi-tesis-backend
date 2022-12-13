@@ -31,12 +31,6 @@ def get_classified_dataset_list():
     return dataset_service.get_datasets_list(path='classified')
 
 
-@router.get('/balanced', response_model=List[FileUpload])
-def get_balanced_dataset_list():
-    logger.debug('get_balanced_dataset_list()')
-    return dataset_service.get_datasets_list(path='balanced')
-
-
 @router.post('/upload', response_model=FileUpload)
 def upload_dataset(file: UploadFile = File()):
     logger.debug('upload_dataset()')
@@ -77,7 +71,7 @@ def balance_dataset(file_path: str):
 
     return dataset_service.to_csv(
         df=df_balanced,
-        file_path=f'resources/balanced/{file_path}'
+        file_path=f'resources/cleaned/balanced_{file_path}'
     )
 
 
