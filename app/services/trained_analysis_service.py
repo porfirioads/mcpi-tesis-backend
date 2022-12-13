@@ -80,26 +80,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
 
             i += 1
 
-        # for index, row in df.iterrows():
-        #     logger.debug(f'classifying item {index + 1} of {len(df)}')
-        #     text = row[text_column]
-        #     sentiment = row[target_column]
-
-        #     scores = [
-        #         self.dtcl.classify(text),
-        #         self.mecl.classify(text),
-        #         self.nbcl.classify(text),
-        #     ]
-
-        #     data.append([
-        #         text,
-        #         sentiment,
-        #         scores[0],
-        #         scores[1],
-        #         scores[2],
-        #         self.dataset_service.most_frequent(scores)
-        #     ])
-
         return pd.DataFrame(
             data,
             columns=[
