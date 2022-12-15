@@ -26,6 +26,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from app.config import logger
+from app.services.cleaning_service import CleaningService
 
 random_state = 100
 
@@ -48,6 +49,7 @@ classifiers = {
 
 class CustomAnalysisService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
+    cleaning_service = CleaningService()
 
     def prepare_dataset(
         self,
@@ -127,49 +129,132 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         self.train_models()
         data = []
 
-        for classifier in classifiers:
-            self.execute_algorithm(
-                classifier, self.X_train, self.X_test, self.y_train, self.y_test)
+        for index, row in df.iterrows():
+            logger.debug(f'classifying item {index + 1} of {len(df)}')
+            text = row[text_column]
+            sentiment = row[target_column]
+            fields = self.cleaning_service.calculate_data_fields(text)
+            del fields[0]
+            fields = [sentiment] + fields
+            fields = [int(field) for field in fields]
+            fields = np.array(fields).reshape(1, -1)
 
-        # for index, row in df.iterrows():
-        #     print(f'classifying item {index + 1} of {len(df)}')
-        #     text = row[text_column]
-        #     sentiment = row[target_column]
+            scores = [
+                classifiers['nearest_neighbors'].predict(fields)[0],
+                classifiers['linear_svm'].predict(fields)[0],
+                classifiers['rbf_svm'].predict(fields)[0],
+                classifiers['gaussian_process'].predict(fields)[0],
+                classifiers['decision_tree'].predict(fields)[0],
+                classifiers['random_forest'].predict(fields)[0],
+                classifiers['neural_net'].predict(fields)[0],
+                classifiers['ada_boost'].predict(fields)[0],
+                classifiers['naive_bayes'].predict(fields)[0],
+                classifiers['qda'].predict(fields)[0],
+                classifiers['gradient_boosting'].predict(fields)[0],
+                classifiers['logistic_regression'].predict(fields)[0],
+                classifiers['stochastic_gradient_descent'].predict(fields)[0],
+            ]
 
-        #     scores = [
-        #         classifiers['nearest_neighbors'].classify(text),
-        #         classifiers['linear_svm'].classify(text),
-        #         classifiers['rbf_svm'].classify(text),
-        #         classifiers['gaussian_process'].classify(text),
-        #         classifiers['decision_tree'].classify(text),
-        #         classifiers['random_forest'].classify(text),
-        #         classifiers['neural_net'].classify(text),
-        #         classifiers['ada_boost'].classify(text),
-        #         classifiers['naive_bayes'].classify(text),
-        #         classifiers['qda'].classify(text),
-        #         classifiers['gradient_boosting'].classify(text),
-        #         classifiers['logistic_regression'].classify(text),
-        #         classifiers['stochastic_gradient_descent'].classify(text),
-        #     ]
+            data.append([
+                text,
+                sentiment,
+                scores[0],
+                scores[1],
+                scores[2],
+                scores[3],
+                scores[4],
+                scores[5],
+                scores[6],
+                scores[7],
+                scores[8],
+                scores[9],
+                scores[10],
+                scores[11],
+                scores[12],
+                self.dataset_service.most_frequent(scores)
+            ])
 
-        #     data.append([
-        #         text,
-        #         sentiment,
-        #         scores[0],
-        #         scores[1],
-        #         scores[2],
-        #         scores[3],
-        #         scores[4],
-        #         scores[5],
-        #         scores[6],
-        #         scores[7],
-        #         scores[8],
-        #         scores[9],
-        #         scores[10],
-        #         scores[11],
-        #         scores[12],
-        #         self.dataset_service.most_frequent(scores)
-        #     ])
+        return pd.DataFrame(
+            data,
+            columns=[
+                'answer',
+                'sentiment',
+                'nearest_neighbors',
+                'linear_svm',
+                'rbf_svm',
+                'gaussian_process',
+                'decision_tree',
+                'random_forest',
+                'neural_net',
+                'ada_boost',
+                'naive_bayes',
+                'qda',
+                'gradient_boosting',
+                'logistic_regression',
+                'stochastic_gradient_descent',
+                'max_voting'
+            ]
+        )
+
+    def classify_for_evaluation(
+        self,
+        df: pd.DataFrame,
+        text_column: str,
+        target_column: str
+    ) -> pd.DataFrame:
+        new_df = df.drop([text_column], axis=1)
+
+        self.X_train, self.X_test, self.y_train, self.y_test = \
+            self.dataset_service.split_dataset(new_df, target_column)
+
+        self.train_models()
+        data = []
+        i = 0  # Informative index in iteration
+
+        for item in self.y_test.iteritems():
+            logger.debug(f'classifying item {i + 1} of {len(self.y_test)}')
+            text = df.iloc[item[0]][text_column]
+            sentiment = df.iloc[item[0]][target_column]
+            fields = self.cleaning_service.calculate_data_fields(text)
+            del fields[0]
+            fields = [sentiment] + fields
+            fields = [int(field) for field in fields]
+            fields = np.array(fields).reshape(1, -1)
+
+            scores = [
+                classifiers['nearest_neighbors'].predict(fields)[0],
+                classifiers['linear_svm'].predict(fields)[0],
+                classifiers['rbf_svm'].predict(fields)[0],
+                classifiers['gaussian_process'].predict(fields)[0],
+                classifiers['decision_tree'].predict(fields)[0],
+                classifiers['random_forest'].predict(fields)[0],
+                classifiers['neural_net'].predict(fields)[0],
+                classifiers['ada_boost'].predict(fields)[0],
+                classifiers['naive_bayes'].predict(fields)[0],
+                classifiers['qda'].predict(fields)[0],
+                classifiers['gradient_boosting'].predict(fields)[0],
+                classifiers['logistic_regression'].predict(fields)[0],
+                classifiers['stochastic_gradient_descent'].predict(fields)[0],
+            ]
+
+            data.append([
+                text,
+                sentiment,
+                scores[0],
+                scores[1],
+                scores[2],
+                scores[3],
+                scores[4],
+                scores[5],
+                scores[6],
+                scores[7],
+                scores[8],
+                scores[9],
+                scores[10],
+                scores[11],
+                scores[12],
+                self.dataset_service.most_frequent(scores)
+            ])
 
         return pd.DataFrame(
             data,

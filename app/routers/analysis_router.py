@@ -90,7 +90,7 @@ def custom(file_path: str):
         target_column='sentiment'
     )
 
-    df_classified = custom_analysis_service.classify_for_evaluation(
+    df_classified = custom_analysis_service.classify(
         df,
         'answer',
         'sentiment'
@@ -112,7 +112,7 @@ def custom(file_path: str):
         target_column='sentiment'
     )
 
-    df_classified = custom_analysis_service.classify(
+    df_classified = custom_analysis_service.classify_for_evaluation(
         df,
         'answer',
         'sentiment'
@@ -120,7 +120,7 @@ def custom(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/custom_{file_path}'
+        f'resources/classified/custom_evaluation_{file_path}'
     )
 
 

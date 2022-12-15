@@ -160,7 +160,7 @@ class CleaningService(metaclass=SingletonMeta):
         cant_caracteres = len(text)
 
         # PASO 7: Generación de fila para dataset
-        ten = minusculas.lower()
+        ten = f'{minusculas.lower()}'
         can_pala = cantidad
 
         return [
