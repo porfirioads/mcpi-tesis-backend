@@ -37,7 +37,7 @@ def pretrained(file_path: str):
 
 
 @router.post('/trained_evaluation', response_model=FileUpload)
-def trained(file_path: str):
+def trained_evaluation(file_path: str):
     logger.debug('trained()')
 
     df = trained_analysis_service.prepare_dataset(
@@ -76,7 +76,7 @@ def trained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/trained_evaluation_{file_path}'
+        f'resources/classified/trained_{file_path}'
     )
 
 
@@ -103,7 +103,7 @@ def custom(file_path: str):
 
 
 @router.post('/custom_evaluation', response_model=FileUpload)
-def custom(file_path: str):
+def custom_evaluation(file_path: str):
     logger.debug('custom()')
 
     df = custom_analysis_service.prepare_dataset(
@@ -137,3 +137,94 @@ def metrics(file_path: str):
         y_true='sentiment',
         y_pred='max_voting'
     )
+
+
+@router.post('/metrics_pretrained')
+def metrics_pretrained(file_path: str):
+    df = dataset_service.read_dataset(
+        file_path=f'resources/classified/{file_path}',
+        encoding='utf-8',
+        delimiter=','
+    )
+
+    classifiers = [
+        'vader',
+        'textblob',
+        'naive_bayes',
+        'max_voting'
+    ]
+
+    data = {}
+
+    for classifier in classifiers:
+        data[classifier] = dataset_service.get_metrics(
+            df=df,
+            y_true='sentiment',
+            y_pred=classifier
+        )
+
+    return data
+
+
+@router.post('/metrics_trained')
+def metrics_trained(file_path: str):
+    df = dataset_service.read_dataset(
+        file_path=f'resources/classified/{file_path}',
+        encoding='utf-8',
+        delimiter=','
+    )
+
+    classifiers = [
+        'decision_tree',
+        'max_entrophy',
+        'naive_bayes',
+        'max_voting'
+    ]
+
+    data = {}
+
+    for classifier in classifiers:
+        data[classifier] = dataset_service.get_metrics(
+            df=df,
+            y_true='sentiment',
+            y_pred=classifier
+        )
+
+    return data
+
+
+@router.post('/metrics_custom')
+def metrics_custom(file_path: str):
+    df = dataset_service.read_dataset(
+        file_path=f'resources/classified/{file_path}',
+        encoding='utf-8',
+        delimiter=','
+    )
+
+    classifiers = [
+        'nearest_neighbors',
+        'linear_svm',
+        'rbf_svm',
+        'gaussian_process',
+        'decision_tree',
+        'random_forest',
+        'neural_net',
+        'ada_boost',
+        'naive_bayes',
+        'qda',
+        'gradient_boosting',
+        'logistic_regression',
+        'stochastic_gradient_descent',
+        'max_voting'
+    ]
+
+    data = {}
+
+    for classifier in classifiers:
+        data[classifier] = dataset_service.get_metrics(
+            df=df,
+            y_true='sentiment',
+            y_pred=classifier
+        )
+
+    return data
