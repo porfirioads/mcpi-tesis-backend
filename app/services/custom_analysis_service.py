@@ -237,24 +237,10 @@ class CustomAnalysisService(metaclass=SingletonMeta):
                 classifiers['stochastic_gradient_descent'].predict(fields)[0],
             ]
 
-            data.append([
-                text,
-                sentiment,
-                scores[0],
-                scores[1],
-                scores[2],
-                scores[3],
-                scores[4],
-                scores[5],
-                scores[6],
-                scores[7],
-                scores[8],
-                scores[9],
-                scores[10],
-                scores[11],
-                scores[12],
-                self.dataset_service.most_frequent(scores)
-            ])
+            data.append(
+                [text, sentiment] + scores
+                + [self.dataset_service.most_frequent(scores)]
+            )
 
         return pd.DataFrame(
             data,

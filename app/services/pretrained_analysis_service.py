@@ -81,14 +81,10 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
                 else:
                     scores[i] = 0
 
-            data.append([
-                text,
-                sentiment,
-                scores[0],
-                scores[1],
-                scores[2],
-                self.dataset_service.most_frequent(scores)
-            ])
+            data.append(
+                [text, sentiment] + scores
+                + [self.dataset_service.most_frequent(scores)]
+            )
 
         return pd.DataFrame(
             data,

@@ -204,17 +204,17 @@ def metrics_custom(file_path: str):
     classifiers = [
         'nearest_neighbors',
         'linear_svm',
-        'rbf_svm',
-        'gaussian_process',
-        'decision_tree',
+        # 'rbf_svm',
+        # 'gaussian_process',
+        # 'decision_tree',
         'random_forest',
-        'neural_net',
-        'ada_boost',
-        'naive_bayes',
+        # 'neural_net',
+        # 'ada_boost',
+        # 'naive_bayes',
         'qda',
-        'gradient_boosting',
+        # 'gradient_boosting',
         'logistic_regression',
-        'stochastic_gradient_descent',
+        # 'stochastic_gradient_descent',
         'max_voting'
     ]
 
