@@ -195,23 +195,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-/resources/uploads/*
-!/resources/uploads/.gitkeep
-/models/*
-!/models/.gitkeep
-
-# ---------------
-# Angular
-# ---------------
-
-.DS_STORE
-
-/dist/
-/bazel-out
-/integration/bazel/bazel-*
-*.log
-node_modules
-
 # CircleCI temporary file for cache key computation.
 # See `save_month_to_file` in `.circleci/config.yml`.
 month.txt
@@ -268,14 +251,14 @@ baseline.json
 !.vscode/extensions.json
 
 # Uploaded datasets
-resources/uploads/*
-!resources/uploads/.gitkeep
-!resources/cleaned
-resources/cleaned/*
-!resources/cleaned/.gitkeep
-!resources/classified
-resources/classified/*
-!resources/classified/.gitkeep
-!resources/balanced
-resources/balanced/*
-!resources/balanced/.gitkeep
+# resources/uploads/*
+# !resources/uploads/.gitkeep
+# !resources/cleaned
+# resources/cleaned/*
+# !resources/cleaned/.gitkeep
+# !resources/classified
+# resources/classified/*
+# !resources/classified/.gitkeep
+# !resources/balanced
+# resources/balanced/*
+# !resources/balanced/.gitkeep
