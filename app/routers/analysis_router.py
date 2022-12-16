@@ -38,7 +38,7 @@ def pretrained(file_path: str):
 
 @router.post('/trained_evaluation', response_model=FileUpload)
 def trained_evaluation(file_path: str):
-    logger.debug('trained()')
+    logger.debug('trained_evaluation()')
 
     df = trained_analysis_service.prepare_dataset(
         file_path=f'resources/cleaned/{file_path}',
@@ -104,7 +104,7 @@ def custom(file_path: str):
 
 @router.post('/custom_evaluation', response_model=FileUpload)
 def custom_evaluation(file_path: str):
-    logger.debug('custom()')
+    logger.debug('custom_evaluation()')
 
     df = custom_analysis_service.prepare_dataset(
         file_path=f'resources/cleaned/{file_path}',
@@ -204,17 +204,17 @@ def metrics_custom(file_path: str):
     classifiers = [
         'nearest_neighbors',
         'linear_svm',
-        # 'rbf_svm',
-        # 'gaussian_process',
-        # 'decision_tree',
+        'rbf_svm',
+        'gaussian_process',
+        'decision_tree',
         'random_forest',
-        # 'neural_net',
-        # 'ada_boost',
-        # 'naive_bayes',
+        'neural_net',
+        'ada_boost',
+        'naive_bayes',
         'qda',
-        # 'gradient_boosting',
+        'gradient_boosting',
         'logistic_regression',
-        # 'stochastic_gradient_descent',
+        'stochastic_gradient_descent',
         'max_voting'
     ]
 

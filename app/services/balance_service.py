@@ -14,22 +14,6 @@ class BalanceService(metaclass=SingletonMeta):
     phrase_replacer_service = PhraseReplacerService()
     cleaning_service = CleaningService()
 
-    def join_categories(
-        self,
-        df: pd.DataFrame,
-        source_column: str,
-        categories_to_join: List[str],
-        target_category: str
-    ):
-        replacements = {}
-
-        for category in categories_to_join:
-            replacements[category] = target_category
-
-        df[source_column] = df[source_column].replace(replacements)
-
-        return df
-
     def balance(
         self,
         file_path: str,
@@ -44,7 +28,7 @@ class BalanceService(metaclass=SingletonMeta):
         )
 
         # Negative and neutral answers are now considered as negative
-        df = self.join_categories(
+        df = self.cleaning_service.join_categories(
             df=df,
             source_column='sentiment',
             categories_to_join=['Neutral', 'Negativo'],

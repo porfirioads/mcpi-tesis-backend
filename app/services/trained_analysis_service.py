@@ -80,7 +80,7 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
 
             i += 1
 
-        return pd.DataFrame(
+        new_df = pd.DataFrame(
             data,
             columns=[
                 'answer',
@@ -91,6 +91,13 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 'max_voting'
             ]
         )
+
+        for column in ['sentiment', 'decision_tree', 'max_entrophy', 'naive_bayes', 'max_voting']:
+            new_df[column] = new_df[column].replace(
+                {'pos': '1', 'neg': '-1', }
+            )
+
+        return new_df
 
     def classify(
         self,
@@ -104,7 +111,7 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
         data = []
 
         for index, row in df.iterrows():
-            print(f'classifying item {index + 1} of {len(df)}')
+            logger.debug(f'classifying item {index + 1} of {len(df)}')
             text = row[text_column]
             sentiment = row[target_column]
 
@@ -119,7 +126,7 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 + [self.dataset_service.most_frequent(scores)]
             )
 
-        return pd.DataFrame(
+        new_df = pd.DataFrame(
             data,
             columns=[
                 'answer',
@@ -130,3 +137,10 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 'max_voting'
             ]
         )
+
+        for column in ['sentiment', 'decision_tree', 'max_entrophy', 'naive_bayes', 'max_voting']:
+            new_df[column] = new_df[column].replace(
+                {'pos': '1', 'neg': '-1', }
+            )
+
+        return new_df

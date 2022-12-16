@@ -1,4 +1,5 @@
 import re
+from typing import List
 from app.services.dataset_service import DatasetService
 from app.services.phrase_replacer_service import PhraseReplacerService
 from app.utils.singleton import SingletonMeta
@@ -199,7 +200,33 @@ class CleaningService(metaclass=SingletonMeta):
             clean_data = self.calculate_data_fields(answer)
             data.append([sentiment] + clean_data)
 
-        return pd.DataFrame(
+        new_df = pd.DataFrame(
             data,
             columns=HEADERS
         )
+
+        # Negative and neutral answers are now considered as negative
+        new_df = self.join_categories(
+            df=new_df,
+            source_column='sentiment',
+            categories_to_join=['Neutral', 'Negativo'],
+            target_category='Negativo'
+        )
+
+        return new_df
+
+    def join_categories(
+        self,
+        df: pd.DataFrame,
+        source_column: str,
+        categories_to_join: List[str],
+        target_category: str
+    ):
+        replacements = {}
+
+        for category in categories_to_join:
+            replacements[category] = target_category
+
+        df[source_column] = df[source_column].replace(replacements)
+
+        return df

@@ -73,38 +73,6 @@ class CustomAnalysisService(metaclass=SingletonMeta):
 
         return df
 
-    def calculate_accuracy(self, y_test, y_pred) -> tuple:
-        confusion = confusion_matrix(y_test, y_pred)
-        accuracy = accuracy_score(y_test, y_pred)
-        report = classification_report(y_test, y_pred)
-        print('Accuracy calculado.')
-        return confusion, accuracy, report
-
-    def predict(self, X_test, model):
-        y_pred = model.predict(X_test)
-        print('Predicción finalizada.')
-        return y_pred
-
-    def execute_algorithm(self, classifier_name: str, X_train, X_test, y_train, y_test):
-        print(f'\n-------------------\n{classifier_name}\n-------------------')
-        classifiers[classifier_name].fit(X_train, y_train)
-        print(f'Modelo entrenado.')
-        y_pred = self.predict(X_test, classifiers[classifier_name])
-        confusion, accuracy, report = self.calculate_accuracy(y_test, y_pred)
-        print(f'Confusion matrix:\n {confusion}')
-        print(f'Accuracy score: {accuracy}')
-        print(f'Classification report:\n {report}')
-        # fig, ax = plt.subplots(figsize=(10, 10))
-
-        # plot_confusion_matrix(
-        #     classifiers[classifier_name],
-        #     X_test,
-        #     y_test,
-        #     ax=ax,
-        #     cmap='Blues'
-        # )
-        print()
-
     def train_models(self):
         keys = list(classifiers.keys())
         for i in range(len(keys)):

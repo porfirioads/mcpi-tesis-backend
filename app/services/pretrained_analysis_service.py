@@ -5,6 +5,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 import pandas as pd
+from app.config import logger
 
 
 class PretrainedAnalysisService(metaclass=SingletonMeta):
@@ -63,7 +64,7 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
         data = []
 
         for index, row in df.iterrows():
-            print(f'classifying item {index + 1} of {len(df)}')
+            logger.debug(f'classifying item {index + 1} of {len(df)}')
             text = row[text_column]
             sentiment = row[target_column]
 

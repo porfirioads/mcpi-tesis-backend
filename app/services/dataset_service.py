@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, \
     precision_score, recall_score
 from collections import Counter
 from sklearn.model_selection import train_test_split
+from app.config import logger
 
 
 class DatasetService(metaclass=SingletonMeta):
@@ -106,32 +107,34 @@ class DatasetService(metaclass=SingletonMeta):
         return df[target_column].value_counts().to_dict()
 
     def get_metrics(self, df: pd.DataFrame, y_true: str, y_pred: str) -> dict:
+        tp = 0
+        fp = 0
+        tn = 0
+        fn = 0
+
         for index, row in df.iterrows():
+            logger.debug(f'{ row[y_true]} vs { row[y_pred]}')
             if row[y_true] == 1:
-                pass
-            elif row[y_true] == 0:
-                pass
-            elif row[y_true] == -1:
-                pass
+                if row[y_pred] == 1:
+                    tp += 1
+                else:
+                    fp += 1
+            else:
+                if row[y_pred] == -1:
+                    tn += 1
+                else:
+                    fn += 1
 
-        accuracy = accuracy_score(
-            df[y_true],
-            df[y_pred],
-            # pos_label=1,
-            # average='micro'
-        )
+        logger.debug(f'tp: {tp}, fp: {fp}, tn: {tn}, fn: {fn}')
 
-        kappa = cohen_kappa_score(
-            df[y_true],
-            df[y_pred],
-            # pos_label=1,
-            # average='micro'
-        )
+        accuracy = accuracy_score(df[y_true], df[y_pred])
+
+        kappa = cohen_kappa_score(df[y_true], df[y_pred])
 
         f1 = f1_score(
             df[y_true],
             df[y_pred],
-            # pos_label=1,
+            pos_label=1,
             average='micro'
         )
 
@@ -154,5 +157,12 @@ class DatasetService(metaclass=SingletonMeta):
             'kappa': kappa,
             'f1': f1,  # Promedio de la precisión
             'precision': precision,  # Cuantos son relevantes
-            'recall': recall  # Cuantos son seleccionados
+            'recall': recall,  # Cuantos son seleccionados
+            'tp': tp,
+            'fp': fp,
+            'tn': tn,
+            'fn': fn
+            # 'sensitivity': (tp) / (tp + fn),
+            # 'specificity': 1 - ((fp) / (fp + tn)),
+            # 'accuracy_calc': (tp + tn) / (tp + fp + fn + tn)
         }
