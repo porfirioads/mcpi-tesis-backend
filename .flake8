@@ -3,4 +3,4 @@ max-line-length = 80
 ignore = W605, W503
 exclude =
     __init__.py
-    app/drafts/*
+    drafts/*
