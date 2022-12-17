@@ -14,6 +14,7 @@ jupyter = "*"
 matplotlib = "*"
 seaborn = "*"
 imbalanced-learn = "*"
+jupyterlab = "*"
 
 [dev-packages]
 flake8 = "*"
