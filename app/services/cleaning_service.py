@@ -3,7 +3,6 @@ from typing import List
 from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
 from textblob import TextBlob
-from datetime import datetime
 import pandas as pd
 
 HEADERS = [
@@ -200,10 +199,6 @@ class CleaningService(metaclass=SingletonMeta):
             encoding=encoding,
             delimiter=delimiter
         )
-
-        # New dataset file name
-        timestamp = int(datetime.timestamp(datetime.now()))
-        file_path = f'{file_path[0: -4]}_{timestamp}.csv'
 
         # Get the columns that contains answers
         answers = original_df.columns[3:].to_list()

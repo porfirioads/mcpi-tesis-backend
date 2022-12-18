@@ -32,7 +32,7 @@ def pretrained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/pretrained_{file_path}'
+        f'resources/classified/pre_all_{file_path}'
     )
 
 
@@ -54,7 +54,7 @@ def trained_evaluation(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/trained_evaluation_{file_path}'
+        f'resources/classified/tra_eva_{file_path}'
     )
 
 
@@ -76,7 +76,7 @@ def trained(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/trained_{file_path}'
+        f'resources/classified/tra_all_{file_path}'
     )
 
 
@@ -98,7 +98,7 @@ def custom(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/custom_{file_path}'
+        f'resources/classified/cus_all_{file_path}'
     )
 
 
@@ -120,7 +120,7 @@ def custom_evaluation(file_path: str):
 
     return dataset_service.to_csv(
         df_classified,
-        f'resources/classified/custom_evaluation_{file_path}'
+        f'resources/classified/cus_eva_{file_path}'
     )
 
 

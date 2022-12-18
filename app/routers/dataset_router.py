@@ -55,7 +55,7 @@ def clean_dataset(file_path: str):
 
     return dataset_service.to_csv(
         df=df_cleaned,
-        file_path=f'resources/cleaned/{file_path}'
+        file_path=f'resources/cleaned/cle_{file_path}'
     )
 
 
@@ -71,7 +71,7 @@ def balance_dataset(file_path: str):
 
     return dataset_service.to_csv(
         df=df_balanced,
-        file_path=f'resources/cleaned/balanced_{file_path}'
+        file_path=f'resources/cleaned/bal_{file_path}'
     )
 
 
