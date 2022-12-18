@@ -113,7 +113,6 @@ class DatasetService(metaclass=SingletonMeta):
         fn = 0
 
         for index, row in df.iterrows():
-            logger.debug(f'{ row[y_true]} vs { row[y_pred]}')
             if row[y_true] == 1:
                 if row[y_pred] == 1:
                     tp += 1
@@ -135,29 +134,47 @@ class DatasetService(metaclass=SingletonMeta):
             df[y_true],
             df[y_pred],
             pos_label=1,
-            average='micro'
+            average='binary'
         )
 
         precision = precision_score(
             df[y_true],
             df[y_pred],
             pos_label=1,
-            average='micro'
+            average='binary'
         )
 
-        recall = recall_score(
+        sensitivity = recall_score(
             df[y_true],
             df[y_pred],
             pos_label=1,
-            average='micro'
+            average='binary'
         )
+
+        specificity = recall_score(
+            df[y_true],
+            df[y_pred],
+            pos_label=-1,
+            average='binary'
+        )
+
+        # pred_prob1 = model1.predict_proba(X_test)
+        # auc_score1 = roc_auc_score(y_test, pred_prob1[:,1])
+
+        # auc = roc_auc_score(
+        #     df[y_true],
+        #     df[y_proba],
+        #     average='binary'
+        # )
 
         return {
             'accuracy': accuracy,
+            'sensitivity': sensitivity,
+            'specificity': specificity,
+            # 'auc': auc,
             'kappa': kappa,
-            'f1': f1,  # Promedio de la precisión
-            'precision': precision,  # Cuantos son relevantes
-            'recall': recall,  # Cuantos son seleccionados
+            'f1': f1,
+            'precision': precision,
             'tp': tp,
             'fp': fp,
             'tn': tn,
