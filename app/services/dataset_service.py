@@ -154,7 +154,7 @@ class DatasetService(metaclass=SingletonMeta):
 
         return {
             'accuracy': accuracy,
-            # 'kappa': kappa,
+            'kappa': kappa,
             'f1': f1,  # Promedio de la precisión
             'precision': precision,  # Cuantos son relevantes
             'recall': recall,  # Cuantos son seleccionados

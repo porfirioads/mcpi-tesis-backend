@@ -1,20 +1,27 @@
 import re
 from typing import List
 from app.services.dataset_service import DatasetService
-from app.services.phrase_replacer_service import PhraseReplacerService
 from app.utils.singleton import SingletonMeta
-from app.schemas.common_schemas import FileUpload
 from textblob import TextBlob
 from datetime import datetime
-from app.config import logger
 import pandas as pd
 
 HEADERS = [
     'sentiment', 'answer', 'length', 'cc', 'vbp', 'cd', 'dt', 'ex', 'fw',
-    'inn', 'jj', 'jjr', 'jjs', 'ls', 'md', 'nn', 'nns', 'nnp', 'nnps', 'pdt',
-    'posss', 'prp', 'rb', 'rbr', 'rp', 'to', 'uh', 'vb', 'vbd', 'vbg', 'vbn',
-    'vbz', 'wdt', 'wp', 'wps', 'wrb', 'pos_length', 'neg_length',
-    'pos_acumulado', 'neg_acumulado', 'polarity', 'cant_caracteres'
+    'inn', 'jj', 'jjr', 'jjs',
+    # 'ls',
+    'md', 'nn', 'nns',
+    # 'nnp', 'nnps',
+    'pdt',
+    # 'posss',
+    'prp', 'rb', 'rbr', 'rp', 'to',
+    # 'uh',
+    'vb', 'vbd',
+    # 'vbg',
+    'vbn', 'vbz', 'wdt', 'wp',
+    # 'wps',
+    'wrb', 'pos_length', 'neg_length', 'pos_acumulado', 'neg_acumulado',
+    'polarity', 'cant_caracteres'
 ]
 
 
@@ -31,29 +38,29 @@ class CleaningService(metaclass=SingletonMeta):
         jj = 0  # Adjetivo
         jjr = 0  # Adjetivo comparativo
         jjs = 0  # Adjetivo superlativo
-        ls = 0  # Marcador de lista
+        # ls = 0  # Marcador de lista
         md = 0  # Modal (podría, podrá)
         nn = 0  # Sustantivo singular
         nns = 0  # Sustantivo plural
-        nnp = 0  # Sustantivo propio
-        nnps = 0  # Sustantivo propio plural
+        # nnp = 0  # Sustantivo propio
+        # nnps = 0  # Sustantivo propio plural
         pdt = 0  # Predeterminado
-        posss = 0  # Posesivo
+        # posss = 0  # Posesivo
         prp = 0  # Pronombre personal
         rb = 0  # RB Adverbio
         rbr = 0  # Adverbio comparativo
         rp = 0  # Particular
         to = 0  # Particular de infinitivo
-        uh = 0  # Interjección
+        # uh = 0  # Interjección
         vb = 0  # Verbo
         vbd = 0  # VBD ?
-        vbg = 0  # VBG ?
+        # vbg = 0  # VBG ?
         vbn = 0  # Verbo participio
         vbp = 0  # Verbo presente
         vbz = 0  # Verbo tercera persona
         wdt = 0  # Wh-determiner
         wp = 0  # Pronombre de pregunta (quién, qué)
-        wps = 0  # WP$ Posesivo con pronombre (cuyo)
+        # wps = 0  # WP$ Posesivo con pronombre (cuyo)
         wrb = 0  # Wh-adverb (dónde, cuándo)
         palabras_pos = 0
         palabras_neg = 0
@@ -97,22 +104,22 @@ class CleaningService(metaclass=SingletonMeta):
                 jjr = jjr + 1
             if (pos == "JJS"):
                 jjs = jjs + 1
-            if (pos == "LS"):
-                ls = ls + 1
+            # if (pos == "LS"):
+            #     ls = ls + 1
             if (pos == "MD"):
                 md = md + 1
             if (pos == "NN"):
                 nn = nn + 1
             if (pos == "NNS"):
                 nns = nns + 1
-            if (pos == "NNP"):
-                nnp = nnp + 1
-            if (pos == "NNPS"):
-                nnps = nnps + 1
+            # if (pos == "NNP"):
+            #     nnp = nnp + 1
+            # if (pos == "NNPS"):
+            #     nnps = nnps + 1
             if (pos == "PDT"):
                 pdt = pdt + 1
-            if (pos == "POS"):
-                posss = posss + 1
+            # if (pos == "POS"):
+            #     posss = posss + 1
             if (pos == "PRP$"):
                 prp = prp + 1
             if (pos == "RB"):
@@ -123,8 +130,8 @@ class CleaningService(metaclass=SingletonMeta):
                 rp = rp + 1
             if (pos == "TO"):
                 to = to + 1
-            if (pos == "UH"):
-                uh = uh + 1
+            # if (pos == "UH"):
+            #     uh = uh + 1
             if (pos == "VB"):
                 vb = vb + 1
             if (pos == "VBG"):
@@ -137,8 +144,8 @@ class CleaningService(metaclass=SingletonMeta):
                 wdt = wdt + 1
             if (pos == "WP"):
                 wp = wp + 1
-            if (pos == "WP$"):
-                wps = wps + 1
+            # if (pos == "WP$"):
+            #     wps = wps + 1
             if (pos == "WRB"):
                 wrb = wrb + 1
             verf = TextBlob(word)
@@ -165,9 +172,19 @@ class CleaningService(metaclass=SingletonMeta):
         can_pala = cantidad
 
         return [
-            ten, can_pala, cc, vbp, cd, dt, ex, fw, inn, jj, jjr, jjs, ls, md,
-            nn, nns, nnp, nnps, pdt, posss, prp, rb, rbr, rp, to, uh, vb, vbd,
-            vbg, vbn, vbz, wdt, wp, wps, wrb, palabras_pos, palabras_neg,
+            ten, can_pala, cc, vbp, cd, dt, ex, fw, inn, jj, jjr, jjs,
+            # ls,
+            md, nn, nns,
+            # nnp, nnps,
+            pdt,
+            # posss,
+            prp, rb, rbr, rp, to,
+            # uh,
+            vb, vbd,
+            # vbg,
+            vbn, vbz, wdt, wp,
+            # wps,
+            wrb, palabras_pos, palabras_neg,
             acumulado_pos, acumulado_neg, polari, cant_caracteres
         ]
 

@@ -1,30 +1,18 @@
 from app.services.dataset_service import DatasetService
 from app.utils.singleton import SingletonMeta
-from collections import Counter
-from imblearn.over_sampling import RandomOverSampler
-from imblearn.pipeline import Pipeline
-from imblearn.under_sampling import RandomUnderSampler
-from numpy import mean
-from sklearn import model_selection, preprocessing
-from sklearn.datasets import make_moons, make_circles, make_classification
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, \
+    GradientBoostingClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn.metrics import make_scorer, accuracy_score, recall_score, precision_score, classification_report, confusion_matrix, plot_confusion_matrix
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import train_test_split, cross_val_score, cross_validate, cross_val_predict, RepeatedStratifiedKFold
-from sklearn.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from app.config import logger
 from app.services.cleaning_service import CleaningService
 
@@ -34,16 +22,35 @@ classifiers = {
     "nearest_neighbors": KNeighborsClassifier(3),
     "linear_svm": SVC(kernel="linear", C=0.025, random_state=random_state),
     "rbf_svm": SVC(gamma=2, C=1, random_state=random_state),
-    "gaussian_process": GaussianProcessClassifier(1.0 * RBF(1.0), random_state=random_state),
-    "decision_tree": DecisionTreeClassifier(max_depth=5, random_state=random_state),
-    "random_forest": RandomForestClassifier(max_depth=5, n_estimators=10, max_features=8, random_state=random_state),
-    "neural_net": MLPClassifier(alpha=1, max_iter=1000, random_state=random_state),
+    "gaussian_process": GaussianProcessClassifier(
+        1.0 * RBF(1.0),
+        random_state=random_state
+    ),
+    "decision_tree": DecisionTreeClassifier(
+        max_depth=5,
+        random_state=random_state
+    ),
+    "random_forest": RandomForestClassifier(
+        max_depth=5,
+        n_estimators=10,
+        max_features=8,
+        random_state=random_state
+    ),
+    "neural_net": MLPClassifier(
+        alpha=1,
+        max_iter=1000,
+        random_state=random_state
+    ),
     "ada_boost": AdaBoostClassifier(random_state=random_state),
     "naive_bayes": GaussianNB(),
     "qda": QuadraticDiscriminantAnalysis(),
     "gradient_boosting": GradientBoostingClassifier(random_state=random_state),
     "logistic_regression": LogisticRegression(random_state=random_state),
-    "stochastic_gradient_descent": SGDClassifier(max_iter=10000, tol=1e-3, random_state=random_state)
+    "stochastic_gradient_descent": SGDClassifier(
+        max_iter=10000,
+        tol=1e-3,
+        random_state=random_state
+    )
 }
 
 

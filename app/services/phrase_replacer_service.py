@@ -11,10 +11,10 @@ class PhraseReplacerService(metaclass=SingletonMeta):
         output = ''
 
         # Load the pretrained neural net
-        tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+        # tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 
         # Tokenize the text
-        tokenized = tokenizer.tokenize(text)
+        # tokenized = tokenizer.tokenize(text)
 
         # Get the list of words from the entire text
         words = word_tokenize(text)

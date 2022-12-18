@@ -92,7 +92,15 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
             ]
         )
 
-        for column in ['sentiment', 'decision_tree', 'max_entrophy', 'naive_bayes', 'max_voting']:
+        algorithms = [
+            'sentiment',
+            'decision_tree',
+            'max_entrophy',
+            'naive_bayes',
+            'max_voting'
+        ]
+
+        for column in algorithms:
             new_df[column] = new_df[column].replace(
                 {'pos': '1', 'neg': '-1', }
             )
@@ -138,7 +146,15 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
             ]
         )
 
-        for column in ['sentiment', 'decision_tree', 'max_entrophy', 'naive_bayes', 'max_voting']:
+        algorithms = [
+            'sentiment',
+            'decision_tree',
+            'max_entrophy',
+            'naive_bayes',
+            'max_voting'
+        ]
+
+        for column in algorithms:
             new_df[column] = new_df[column].replace(
                 {'pos': '1', 'neg': '-1', }
             )
