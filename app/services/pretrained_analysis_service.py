@@ -77,10 +77,8 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
             for i in range(len(scores)):
                 if scores[i] > 0.3:
                     scores[i] = 1
-                elif scores[i] < -0.3:
-                    scores[i] = -1
                 else:
-                    scores[i] = 0
+                    scores[i] = -1
 
             data.append(
                 [text, sentiment] + scores
