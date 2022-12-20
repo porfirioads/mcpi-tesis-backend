@@ -15,6 +15,7 @@ matplotlib = "*"
 seaborn = "*"
 imbalanced-learn = "*"
 jupyterlab = "*"
+statsmodels = "*"
 
 [dev-packages]
 flake8 = "*"

@@ -227,13 +227,20 @@ class CleaningService(metaclass=SingletonMeta):
 
         return new_df
 
+    def extract_features(
+        self,
+        df: pd.DataFrame,
+        excluded_columns: List[str]
+    ) -> pd.DataFrame:
+        pass
+
     def join_categories(
         self,
         df: pd.DataFrame,
         source_column: str,
         categories_to_join: List[str],
         target_category: str
-    ):
+    ) -> pd.DataFrame:
         replacements = {}
 
         for category in categories_to_join:
