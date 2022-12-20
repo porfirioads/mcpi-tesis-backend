@@ -186,6 +186,8 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         data = []
         i = 0  # Informative index in iteration
 
+        # TODO: Get y_pred in one step
+
         for item in self.y_test.iteritems():
             logger.debug(f'classifying item {i + 1} of {len(self.y_test)}')
             text = df.iloc[item[0]][text_column]

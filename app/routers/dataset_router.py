@@ -75,6 +75,22 @@ def balance_dataset(file_path: str):
     )
 
 
+@router.post('/extract_features', response_model=FileUpload)
+def extract_features(file_path: str):
+    logger.debug('extract_features()')
+
+    df_extracted = cleaning_service.extract_features(
+        file_path=file_path,
+        encoding='utf-8',
+        delimiter=','
+    )
+
+    return dataset_service.to_csv(
+        df=df_extracted,
+        file_path=f'resources/cleaned/ext_{file_path}'
+    )
+
+
 @router.post('/summary')
 def summary_dataset(file_path: str):
     logger.debug('summary_dataset()')
