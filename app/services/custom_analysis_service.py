@@ -183,60 +183,48 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             self.dataset_service.split_dataset(new_df, target_column)
 
         self.train_models()
-        data = []
-        i = 0  # Informative index in iteration
 
-        # TODO: Get y_pred in one step
+        algorithms = [
+            'linear_svm',
+            'nearest_neighbors',
+            'rbf_svm',
+            'gaussian_process',
+            'decision_tree',
+            'random_forest',
+            'neural_net',
+            'ada_boost',
+            'naive_bayes',
+            'qda',
+            'gradient_boosting',
+            'logistic_regression',
+            'stochastic_gradient_descent'
+        ]
+
+        new_df = pd.DataFrame(
+            [],
+            columns=['answer', 'sentiment'] + algorithms + ['max_voting']
+        )
+
+        answers = []
+        sentiments = []
 
         for item in self.y_test.iteritems():
-            logger.debug(f'classifying item {i + 1} of {len(self.y_test)}')
-            text = df.iloc[item[0]][text_column]
-            sentiment = df.iloc[item[0]][target_column]
-            fields = self.cleaning_service.calculate_data_fields(text)
-            del fields[0]
-            fields = [sentiment] + fields
-            fields = [int(field) for field in fields]
-            fields = np.array(fields).reshape(1, -1)
+            answers.append(df.iloc[item[0]][text_column])
+            sentiments.append(df.iloc[item[0]][target_column])
 
-            scores = [
-                classifiers['nearest_neighbors'].predict(fields)[0],
-                classifiers['linear_svm'].predict(fields)[0],
-                classifiers['rbf_svm'].predict(fields)[0],
-                classifiers['gaussian_process'].predict(fields)[0],
-                classifiers['decision_tree'].predict(fields)[0],
-                classifiers['random_forest'].predict(fields)[0],
-                classifiers['neural_net'].predict(fields)[0],
-                classifiers['ada_boost'].predict(fields)[0],
-                classifiers['naive_bayes'].predict(fields)[0],
-                classifiers['qda'].predict(fields)[0],
-                classifiers['gradient_boosting'].predict(fields)[0],
-                classifiers['logistic_regression'].predict(fields)[0],
-                classifiers['stochastic_gradient_descent'].predict(fields)[0],
-            ]
+        new_df['answer'] = answers
+        new_df['sentiment'] = sentiments
 
-            data.append(
-                [text, sentiment] + scores
-                + [self.dataset_service.most_frequent(scores)]
-            )
+        for algorithm in algorithms:
+            result = classifiers[algorithm].predict(self.X_test)
+            new_df[algorithm] = result
 
-        return pd.DataFrame(
-            data,
-            columns=[
-                'answer',
-                'sentiment',
-                'nearest_neighbors',
-                'linear_svm',
-                'rbf_svm',
-                'gaussian_process',
-                'decision_tree',
-                'random_forest',
-                'neural_net',
-                'ada_boost',
-                'naive_bayes',
-                'qda',
-                'gradient_boosting',
-                'logistic_regression',
-                'stochastic_gradient_descent',
-                'max_voting'
-            ]
-        )
+        max_votings = []
+
+        for index, row in new_df.iterrows():
+            values = [row[algorithm] for algorithm in algorithms]
+            max_votings.append(self.dataset_service.most_frequent(values))
+
+        new_df['max_voting'] = max_votings
+
+        return new_df
