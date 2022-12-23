@@ -20,11 +20,21 @@ random_state = 100
 
 classifiers = {
     "nearest_neighbors": KNeighborsClassifier(3),
-    "linear_svm": SVC(kernel="linear", C=0.025, random_state=random_state),
-    "rbf_svm": SVC(gamma=2, C=1, random_state=random_state),
+    "linear_svm": SVC(
+        kernel="linear",
+        C=0.025,
+        random_state=random_state,
+        probability=True
+    ),
+    "rbf_svm": SVC(
+        gamma=2,
+        C=1,
+        random_state=random_state,
+        probability=True
+    ),
     "gaussian_process": GaussianProcessClassifier(
         1.0 * RBF(1.0),
-        random_state=random_state
+        random_state=random_state,
     ),
     "decision_tree": DecisionTreeClassifier(
         max_depth=5,
@@ -44,12 +54,15 @@ classifiers = {
     "ada_boost": AdaBoostClassifier(random_state=random_state),
     "naive_bayes": GaussianNB(),
     "qda": QuadraticDiscriminantAnalysis(),
-    "gradient_boosting": GradientBoostingClassifier(random_state=random_state),
+    "gradient_boosting": GradientBoostingClassifier(
+        random_state=random_state,
+    ),
     "logistic_regression": LogisticRegression(random_state=random_state),
     "stochastic_gradient_descent": SGDClassifier(
-        max_iter=10000,
+        max_iter=1000,
         tol=1e-3,
-        random_state=random_state
+        random_state=random_state,
+        loss="modified_huber"
     )
 }
 
@@ -166,8 +179,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
                 'qda',
                 'gradient_boosting',
                 'logistic_regression',
-                'stochastic_gradient_descent',
-                'max_voting'
+                # 'stochastic_gradient_descent',
             ]
         )
 
@@ -197,12 +209,14 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             'qda',
             'gradient_boosting',
             'logistic_regression',
-            'stochastic_gradient_descent'
+            # 'stochastic_gradient_descent',
         ]
+
+        probas = [f'{algorithm}_proba' for algorithm in algorithms]
 
         new_df = pd.DataFrame(
             [],
-            columns=['answer', 'sentiment'] + algorithms + ['max_voting']
+            columns=['answer', 'sentiment'] + algorithms + probas
         )
 
         answers = []
@@ -216,15 +230,10 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         new_df['sentiment'] = sentiments
 
         for algorithm in algorithms:
+            logger.debug(f'Executing algorithm {algorithm}')
             result = classifiers[algorithm].predict(self.X_test)
+            result_proba = classifiers[algorithm].predict_proba(self.X_test)
             new_df[algorithm] = result
-
-        max_votings = []
-
-        for index, row in new_df.iterrows():
-            values = [row[algorithm] for algorithm in algorithms]
-            max_votings.append(self.dataset_service.most_frequent(values))
-
-        new_df['max_voting'] = max_votings
+            new_df[f'{algorithm}_proba'] = result_proba
 
         return new_df

@@ -75,7 +75,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 scores[0],
                 scores[1],
                 scores[2],
-                self.dataset_service.most_frequent(scores)
             ])
 
             i += 1
@@ -88,7 +87,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 'decision_tree',
                 'max_entrophy',
                 'naive_bayes',
-                'max_voting'
             ]
         )
 
@@ -97,7 +95,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
             'decision_tree',
             'max_entrophy',
             'naive_bayes',
-            'max_voting'
         ]
 
         for column in algorithms:
@@ -129,10 +126,7 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 self.nbcl.classify(text),
             ]
 
-            data.append(
-                [text, sentiment] + scores
-                + [self.dataset_service.most_frequent(scores)]
-            )
+            data.append([text, sentiment] + scores)
 
         new_df = pd.DataFrame(
             data,
@@ -142,7 +136,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
                 'decision_tree',
                 'max_entrophy',
                 'naive_bayes',
-                'max_voting'
             ]
         )
 
@@ -151,7 +144,6 @@ class TrainedAnalysisService(metaclass=SingletonMeta):
             'decision_tree',
             'max_entrophy',
             'naive_bayes',
-            'max_voting'
         ]
 
         for column in algorithms:

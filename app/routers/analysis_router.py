@@ -124,21 +124,6 @@ def custom_evaluation(file_path: str):
     )
 
 
-@router.post('/metrics')
-def metrics(file_path: str):
-    df = dataset_service.read_dataset(
-        file_path=f'resources/classified/{file_path}',
-        encoding='utf-8',
-        delimiter=','
-    )
-
-    return dataset_service.get_metrics(
-        df=df,
-        y_true='sentiment',
-        y_pred='max_voting'
-    )
-
-
 @router.post('/metrics_pretrained')
 def metrics_pretrained(file_path: str):
     df = dataset_service.read_dataset(
@@ -151,7 +136,6 @@ def metrics_pretrained(file_path: str):
         'vader',
         'textblob',
         'naive_bayes',
-        'max_voting'
     ]
 
     data = {}
@@ -178,7 +162,6 @@ def metrics_trained(file_path: str):
         'decision_tree',
         'max_entrophy',
         'naive_bayes',
-        'max_voting'
     ]
 
     data = {}
@@ -214,8 +197,7 @@ def metrics_custom(file_path: str):
         'qda',
         'gradient_boosting',
         'logistic_regression',
-        'stochastic_gradient_descent',
-        'max_voting'
+        # 'stochastic_gradient_descent',
     ]
 
     data = {}

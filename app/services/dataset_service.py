@@ -41,9 +41,6 @@ class DatasetService(metaclass=SingletonMeta):
         return (X_train, X_test, y_train, y_test)
 
     def to_csv(self, df: pd.DataFrame, file_path: str) -> FileUpload:
-        timestamp = int(datetime.timestamp(datetime.now()))
-        file_path = f'{file_path[0: -4]}_{timestamp}.csv'
-
         df.to_csv(
             file_path,
             index=False

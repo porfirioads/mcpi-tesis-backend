@@ -80,10 +80,7 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
                 else:
                     scores[i] = -1
 
-            data.append(
-                [text, sentiment] + scores
-                + [self.dataset_service.most_frequent(scores)]
-            )
+            data.append([text, sentiment] + scores)
 
         return pd.DataFrame(
             data,
@@ -93,6 +90,5 @@ class PretrainedAnalysisService(metaclass=SingletonMeta):
                 'vader',
                 'textblob',
                 'naive_bayes',
-                'max_voting'
             ]
         )
