@@ -262,3 +262,5 @@ baseline.json
 # !resources/balanced
 # resources/balanced/*
 # !resources/balanced/.gitkeep
+resources/test/*
+!resources/test/.gitkeep

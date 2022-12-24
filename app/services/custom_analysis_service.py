@@ -222,7 +222,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         answers = []
         sentiments = []
 
-        for item in self.y_test.iteritems():
+        for item in self.y_test.items():
             answers.append(df.iloc[item[0]][text_column])
             sentiments.append(df.iloc[item[0]][target_column])
 
@@ -233,6 +233,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             logger.debug(f'Executing algorithm {algorithm}')
             result = classifiers[algorithm].predict(self.X_test)
             result_proba = classifiers[algorithm].predict_proba(self.X_test)
+            result_proba = [str(proba) for proba in result_proba]
             new_df[algorithm] = result
             new_df[f'{algorithm}_proba'] = result_proba
 
