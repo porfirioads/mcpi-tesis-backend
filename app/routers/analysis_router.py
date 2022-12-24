@@ -206,7 +206,8 @@ def metrics_custom(file_path: str):
         data[classifier] = dataset_service.get_metrics(
             df=df,
             y_true='sentiment',
-            y_pred=classifier
+            y_pred=classifier,
+            has_probability=True
         )
 
     return data
