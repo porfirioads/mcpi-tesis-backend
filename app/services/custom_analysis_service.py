@@ -233,6 +233,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             logger.debug(f'Executing algorithm {algorithm}')
             result = classifiers[algorithm].predict(self.X_test)
             result_proba = classifiers[algorithm].predict_proba(self.X_test)
+            logger.debug(result_proba)
             result_proba = [str(proba) for proba in result_proba]
             new_df[algorithm] = result
             new_df[f'{algorithm}_proba'] = result_proba
