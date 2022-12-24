@@ -9,6 +9,8 @@ Proyecto de desarrollo para la tesis de la Maestría en Ciencias del Procesamien
 - [Comandos útiles](#comandos-útiles)
   - [Manejo de procesos](#manejo-de-procesos)
 - [Recursos](#recursos)
+- [Solución de problemas](#solución-de-problemas)
+- [Jupyter is already running:](#jupyter-is-already-running)
 
 # Requisitos
 
@@ -56,3 +58,11 @@ kill -9 <pid>
 # Recursos
 
 - [Resultados encuesta](https://drive.google.com/drive/u/1/folders/19EUNpSZYqA0abc3yoJ8vnRST6V9SuH8E)
+
+# Solución de problemas
+
+# Jupyter is already running:
+
+```bash
+lsof -i -P -n | grep "8888 (LISTEN)"
+```
