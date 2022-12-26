@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, \
     GradientBoostingClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
@@ -56,13 +56,7 @@ classifiers = {
     "gradient_boosting": GradientBoostingClassifier(
         random_state=random_state,
     ),
-    "logistic_regression": LogisticRegression(random_state=random_state),
-    "stochastic_gradient_descent": SGDClassifier(
-        max_iter=1000,
-        tol=1e-3,
-        random_state=random_state,
-        loss="modified_huber"
-    )
+    "logistic_regression": LogisticRegression(random_state=random_state)
 }
 
 
@@ -108,7 +102,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         text_column: str,
         target_column: str
     ) -> pd.DataFrame:
-        logger.debug('CustomAnalysisService.classify_for_evaluation() start')
+        logger.debug('CustomAnalysisService.classify_for_evaluation()')
         new_df = df.drop([text_column], axis=1)
 
         self.X_train, self.X_test, self.y_train, self.y_test = \
@@ -128,8 +122,7 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             'naive_bayes',
             'qda',
             'gradient_boosting',
-            'logistic_regression',
-            # 'stochastic_gradient_descent',
+            'logistic_regression'
         ]
 
         probas = [f'{algorithm}_proba' for algorithm in algorithms]
@@ -156,5 +149,4 @@ class CustomAnalysisService(metaclass=SingletonMeta):
             new_df[algorithm] = result
             new_df[f'{algorithm}_proba'] = result_proba
 
-        logger.debug('CustomAnalysisService.classify_for_evaluation() end')
         return new_df

@@ -138,16 +138,22 @@ def metrics_pretrained(file_path: str):
         'naive_bayes',
     ]
 
-    data = {}
+    metrics = {}
 
     for classifier in classifiers:
-        data[classifier] = dataset_service.get_metrics(
+        metrics[classifier] = dataset_service.get_metrics(
             df=df,
             y_true='sentiment',
-            y_pred=classifier
+            y_pred=classifier,
+            has_probability=False
         )
 
-    return data
+    metrics_df = dataset_service.metrics_to_df(metrics=metrics)
+
+    return dataset_service.to_csv(
+        metrics_df,
+        f'resources/metrics/met_{file_path}'
+    )
 
 
 @router.post('/metrics_trained')
@@ -164,16 +170,22 @@ def metrics_trained(file_path: str):
         'naive_bayes',
     ]
 
-    data = {}
+    metrics = {}
 
     for classifier in classifiers:
-        data[classifier] = dataset_service.get_metrics(
+        metrics[classifier] = dataset_service.get_metrics(
             df=df,
             y_true='sentiment',
-            y_pred=classifier
+            y_pred=classifier,
+            has_probability=False
         )
 
-    return data
+    metrics_df = dataset_service.metrics_to_df(metrics=metrics)
+
+    return dataset_service.to_csv(
+        metrics_df,
+        f'resources/metrics/met_{file_path}'
+    )
 
 
 @router.post('/metrics_custom')
@@ -197,17 +209,21 @@ def metrics_custom(file_path: str):
         'qda',
         'gradient_boosting',
         'logistic_regression',
-        # 'stochastic_gradient_descent',
     ]
 
-    data = {}
+    metrics = {}
 
     for classifier in classifiers:
-        data[classifier] = dataset_service.get_metrics(
+        metrics[classifier] = dataset_service.get_metrics(
             df=df,
             y_true='sentiment',
             y_pred=classifier,
             has_probability=True
         )
 
-    return data
+    metrics_df = dataset_service.metrics_to_df(metrics=metrics)
+
+    return dataset_service.to_csv(
+        metrics_df,
+        f'resources/metrics/met_{file_path}'
+    )
