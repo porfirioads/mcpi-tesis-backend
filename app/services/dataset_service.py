@@ -11,7 +11,6 @@ from sklearn.metrics import accuracy_score, cohen_kappa_score, f1_score, \
     precision_score, recall_score, roc_auc_score
 from collections import Counter
 from sklearn.model_selection import train_test_split
-from app.config import logger
 import numpy as np
 
 
@@ -174,30 +173,18 @@ class DatasetService(metaclass=SingletonMeta):
         }
 
         if has_probability:
-            y_proba = []
+            items = []
 
             for item in df[f'{y_pred}_proba'].items():
                 proba = item[1].replace('[', '').replace(']', '')
-                y_proba.append(np.fromstring(proba, dtype=float, sep=' '))
+                items.append(np.fromstring(proba, dtype=float, sep=' '))
 
-                # logger.debug(proba[1])
-                # logger.debug(np.fromstring(proba[1], dtype=float, sep=' '))
-
-            logger.debug(y_proba)
+            y_proba = np.array(items)
 
             metrics['auc'] = roc_auc_score(
                 df[y_true],
                 y_proba[:, 1],
                 average=None
             )
-
-        # pred_prob1 = model1.predict_proba(X_test)
-        # auc_score1 = roc_auc_score(y_test, pred_prob1[:,1])
-
-        # auc = roc_auc_score(
-        #     df[y_true],
-        #     df[y_proba],
-        #     average='binary'
-        # )
 
         return metrics
