@@ -11,7 +11,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-import numpy as np
 import pandas as pd
 from app.config import logger
 from app.services.cleaning_service import CleaningService
@@ -103,92 +102,13 @@ class CustomAnalysisService(metaclass=SingletonMeta):
                 + f'({classifier}) trained.'
             )
 
-    def classify(
-        self,
-        df: pd.DataFrame,
-        text_column: str,
-        target_column: str
-    ) -> pd.DataFrame:
-        new_df = df.drop([text_column], axis=1)
-
-        self.X_train, self.X_test, self.y_train, self.y_test = \
-            self.dataset_service.split_dataset(new_df, target_column)
-
-        self.train_models()
-        data = []
-
-        for index, row in df.iterrows():
-            logger.debug(f'classifying item {index + 1} of {len(df)}')
-            text = row[text_column]
-            sentiment = row[target_column]
-            fields = self.cleaning_service.calculate_data_fields(text)
-            del fields[0]
-            fields = [sentiment] + fields
-            fields = [int(field) for field in fields]
-            fields = np.array(fields).reshape(1, -1)
-
-            scores = [
-                classifiers['nearest_neighbors'].predict(fields)[0],
-                classifiers['linear_svm'].predict(fields)[0],
-                classifiers['rbf_svm'].predict(fields)[0],
-                classifiers['gaussian_process'].predict(fields)[0],
-                classifiers['decision_tree'].predict(fields)[0],
-                classifiers['random_forest'].predict(fields)[0],
-                classifiers['neural_net'].predict(fields)[0],
-                classifiers['ada_boost'].predict(fields)[0],
-                classifiers['naive_bayes'].predict(fields)[0],
-                classifiers['qda'].predict(fields)[0],
-                classifiers['gradient_boosting'].predict(fields)[0],
-                classifiers['logistic_regression'].predict(fields)[0],
-                classifiers['stochastic_gradient_descent'].predict(fields)[0],
-            ]
-
-            data.append([
-                text,
-                sentiment,
-                scores[0],
-                scores[1],
-                scores[2],
-                scores[3],
-                scores[4],
-                scores[5],
-                scores[6],
-                scores[7],
-                scores[8],
-                scores[9],
-                scores[10],
-                scores[11],
-                scores[12],
-                self.dataset_service.most_frequent(scores)
-            ])
-
-        return pd.DataFrame(
-            data,
-            columns=[
-                'answer',
-                'sentiment',
-                'nearest_neighbors',
-                'linear_svm',
-                'rbf_svm',
-                'gaussian_process',
-                'decision_tree',
-                'random_forest',
-                'neural_net',
-                'ada_boost',
-                'naive_bayes',
-                'qda',
-                'gradient_boosting',
-                'logistic_regression',
-                # 'stochastic_gradient_descent',
-            ]
-        )
-
     def classify_for_evaluation(
         self,
         df: pd.DataFrame,
         text_column: str,
         target_column: str
     ) -> pd.DataFrame:
+        logger.debug('CustomAnalysisService.classify_for_evaluation() start')
         new_df = df.drop([text_column], axis=1)
 
         self.X_train, self.X_test, self.y_train, self.y_test = \
@@ -230,14 +150,11 @@ class CustomAnalysisService(metaclass=SingletonMeta):
         new_df['sentiment'] = sentiments
 
         for algorithm in algorithms:
-            logger.debug(f'Executing algorithm {algorithm}')
             result = classifiers[algorithm].predict(self.X_test)
             result_proba = classifiers[algorithm].predict_proba(self.X_test)
-            logger.debug(result_proba)
-            logger.debug(type(result_proba))
-            logger.debug(result_proba.shape)
             result_proba = [str(proba) for proba in result_proba]
             new_df[algorithm] = result
             new_df[f'{algorithm}_proba'] = result_proba
 
+        logger.debug('CustomAnalysisService.classify_for_evaluation() end')
         return new_df
