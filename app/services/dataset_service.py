@@ -27,11 +27,11 @@ class DatasetService(metaclass=SingletonMeta):
 
     def split_dataset(self, df: pd.DataFrame, y_true: str) -> tuple:
         logger.debug('DatasetService.split_dataset()')
-        y = df[y_true]
 
         X_train, X_test, y_train, y_test = train_test_split(
+            # df.drop[y_true],
             df,
-            y,
+            df[y_true],
             test_size=0.25,
             random_state=1
         )
