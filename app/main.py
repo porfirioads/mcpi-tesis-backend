@@ -39,11 +39,17 @@ def on_shutdown():
 
 @app.exception_handler(Exception)
 async def catch_exception(request: Request, exc: Exception):
-    logger.debug(exc)
+    logger.error(exc)
     return JSONResponse(status_code=400, content={'detail': 'UNKNOWN_ERROR'})
 
 
 @app.exception_handler(FileNotFoundError)
 async def catch_file_not_found_error(request: Request, exc: FileNotFoundError):
-    logger.debug(exc)
+    logger.error(exc)
     return JSONResponse(status_code=400, content={'detail': 'FILE_NOT_FOUND'})
+
+
+@app.exception_handler(ValueError)
+async def catch_value_error(request: Request, exc: ValueError):
+    logger.error(exc)
+    return JSONResponse(status_code=400, content={'detail': 'VALUE_ERROR'})
