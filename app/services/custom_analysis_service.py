@@ -15,6 +15,7 @@ import pandas as pd
 from app.config import logger
 from app.services.cleaning_service import CleaningService
 
+
 random_state = 100
 
 classifiers = {
@@ -47,7 +48,7 @@ classifiers = {
     ),
     "neural_net": MLPClassifier(
         alpha=1,
-        max_iter=1000,
+        max_iter=10000,
         random_state=random_state
     ),
     "ada_boost": AdaBoostClassifier(random_state=random_state),
