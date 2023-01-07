@@ -323,7 +323,7 @@ class CleaningService(metaclass=SingletonMeta):
         x = scaler.transform(x)
 
         # N features with highest chi-squared statistics are selected
-        chi2_selector = SelectKBest(chi2, k=10)
+        chi2_selector = SelectKBest(chi2, k=13)
         X = chi2_selector.fit_transform(x, y)
         mask = chi2_selector.get_support(indices=True)
         k_best_features = df.columns[mask]
