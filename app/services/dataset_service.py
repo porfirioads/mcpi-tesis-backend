@@ -174,3 +174,9 @@ class DatasetService(metaclass=SingletonMeta):
         )
 
         return df
+
+    def get_dataset_summary(self, df: pd.DataFrame) -> dict:
+        return {
+            'row_count': df.shape[0],
+            'col_count': df.shape[1],
+        }

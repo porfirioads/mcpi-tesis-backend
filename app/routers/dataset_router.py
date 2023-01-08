@@ -85,3 +85,17 @@ def summary_dataset(file_path: str):
         delimiter=',',
         target_column='sentiment'
     )
+
+
+@router.get('/details/{file_path}')
+def get_dataset(
+        file_path: str,
+        encoding: str = 'latin-1',
+        delimiter: str = ','
+):
+    df = dataset_service.read_dataset(
+        file_path=f'resources/uploads/{file_path}',
+        encoding=encoding,
+        delimiter=delimiter
+    )
+    return dataset_service.get_dataset_summary(df)
