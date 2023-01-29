@@ -41,7 +41,7 @@ class TrainingService(metaclass=SingletonMeta):
             {'Positivo': 1, 'Negativo': -1}
         )
 
-        # Divide dataset in training and test
+        # Split dataset in training and test
         x_values = df[word_columns]
         y_values = df['sentiment']
         seed = 1
@@ -55,6 +55,8 @@ class TrainingService(metaclass=SingletonMeta):
 
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
+        y_proba = model.predict_proba(x_test)
+        y_proba = [str(proba) for proba in y_proba]
         file_path = f'{file_path.split("/")[-1][:-4]}.png'
         auroc_file_path = f'auroc_{model_suffix}_{file_path}'
         confusion_file_path = f'confusion_{model_suffix}_{file_path}'
@@ -79,8 +81,15 @@ class TrainingService(metaclass=SingletonMeta):
             file_path=f'resources/metrics/{confusion_file_path}'
         )
 
+        columns = ['answer', 'sentiment', model_suffix, f'{model_suffix}_proba']
+        new_df = pd.DataFrame(columns=columns)
+        new_df['answer'] = df.iloc[y_test.index.values, :]['answer'].values
+        new_df['sentiment'] = y_test.values
+        new_df[model_suffix] = y_pred
+        new_df[f'{model_suffix}_proba'] = y_proba
+
         return {
-            'df': df,
+            'df': new_df,
             'auroc_file_path': auroc_file_path,
             'confusion_file_path': confusion_file_path,
             'metrics': metrics
@@ -143,18 +152,6 @@ class TrainingService(metaclass=SingletonMeta):
         encoding: str,
         delimiter: str
     ) -> pd.DataFrame:
-        # Read dataset
-        df = dataset_service.read_dataset(
-            file_path=file_path,
-            encoding=encoding,
-            delimiter=delimiter
-        )
-
-        # Convert sentiment column to categories
-        df['sentiment'] = df['sentiment'].replace(
-            {'Positivo': 1, 'Negativo': -1}
-        )
-
         # Do analysis with naive bayes
         df_nbb = self.naive_bayes(
             file_path=file_path,
@@ -176,22 +173,28 @@ class TrainingService(metaclass=SingletonMeta):
             delimiter=delimiter
         )
 
-        columns = list(df.columns.values)
-        columns.insert(2, 'nbb')
-        columns.insert(3, 'lgr')
-        columns.insert(4, 'svm')
-        columns.insert(5, 'max')
+        columns = [
+            'answer',
+            'sentiment',
+            'nbb',
+            'nbb_proba',
+            'lgr',
+            'lgr_proba',
+            'svm',
+            'svm_proba',
+            'max'
+        ]
 
         # Generate new dataframe
         new_df = pd.DataFrame(columns=columns)
-        new_df[columns[6:]] = df_nbb[columns[6:]]
-        new_df['answer'] = df['answer']
-        new_df['sentiment'] = df['sentiment']
-        new_df['nbb'] = df_nbb['sentiment']
-        new_df['lgr'] = df_lgr['sentiment']
-        new_df['svm'] = df_svm['sentiment']
-        new_df['max'] = new_df[
-            ['nbb', 'lgr', 'svm', 'max']
-        ].mode(axis=1).iloc[0]
+        new_df['answer'] = df_nbb['answer']
+        new_df['sentiment'] = df_nbb['sentiment']
+        new_df['nbb'] = df_nbb['nbb']
+        new_df['nbb_proba'] = df_nbb['nbb_proba']
+        new_df['lgr'] = df_lgr['lgr']
+        new_df['lgr_proba'] = df_lgr['lgr_proba']
+        new_df['svm'] = df_svm['svm']
+        new_df['svm_proba'] = df_svm['svm_proba']
+        new_df['max'] = new_df[['nbb', 'lgr', 'svm']].mode(axis=1).iloc[:, 0]
 
         return new_df
