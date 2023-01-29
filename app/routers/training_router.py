@@ -14,14 +14,14 @@ training_service = TrainingService()
 def train_naive_bayes_bernoulli(file_path: str):
     logger.debug('train_naive_bayes_bernoulli()')
 
-    df = training_service.naive_bayes(
+    result = training_service.naive_bayes(
         file_path=f'resources/cleaned/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
 
     return dataset_service.to_csv(
-        df=df,
+        df=result.df,
         file_path=f'resources/classified/nbb_{file_path}'
     )
 
@@ -30,14 +30,14 @@ def train_naive_bayes_bernoulli(file_path: str):
 def train_logistic_regression(file_path: str):
     logger.debug('train_logistic_regression()')
 
-    df = training_service.logistic_regression(
+    result = training_service.logistic_regression(
         file_path=f'resources/cleaned/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
 
     return dataset_service.to_csv(
-        df=df,
+        df=result.df,
         file_path=f'resources/classified/lgr_{file_path}'
     )
 
@@ -46,14 +46,14 @@ def train_logistic_regression(file_path: str):
 def train_svm(file_path: str):
     logger.debug('train_svm()')
 
-    df = training_service.logistic_regression(
+    result = training_service.logistic_regression(
         file_path=f'resources/cleaned/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
 
     return dataset_service.to_csv(
-        df=df,
+        df=result.df,
         file_path=f'resources/classified/svm_{file_path}'
     )
 
@@ -62,13 +62,13 @@ def train_svm(file_path: str):
 def train_all(file_path: str):
     logger.debug('train_all()')
 
-    df = training_service.assemble(
+    result = training_service.assemble(
         file_path=f'resources/cleaned/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
 
     return dataset_service.to_csv(
-        df=df,
+        df=result.df,
         file_path=f'resources/classified/all_{file_path}'
     )

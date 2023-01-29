@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.svm import SVC
 from app.patterns.singleton import SingletonMeta
+from app.schemas.algorithm_schemas import AlgorithmResult
 from app.services.dataset_service import DatasetService
 from app.services.metrics_service import MetricsService
 
@@ -21,7 +22,7 @@ class TrainingService(metaclass=SingletonMeta):
         model: Any,
         plot_title: str,
         model_suffix: str
-    ) -> dict:
+    ) -> AlgorithmResult:
         # Read dataset
         df = dataset_service.read_dataset(
             file_path=file_path,
@@ -88,19 +89,19 @@ class TrainingService(metaclass=SingletonMeta):
         new_df[model_suffix] = y_pred
         new_df[f'{model_suffix}_proba'] = y_proba
 
-        return {
-            'df': new_df,
-            'auroc_file_path': auroc_file_path,
-            'confusion_file_path': confusion_file_path,
-            'metrics': metrics
-        }
+        return AlgorithmResult(
+            df=new_df,
+            auroc_file_path=auroc_file_path,
+            confusion_file_path=confusion_file_path,
+            metrics=metrics
+        )
 
     def logistic_regression(
         self,
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> pd.DataFrame:
+    ) -> AlgorithmResult:
         result = self.execute_algorithm(
             file_path=file_path,
             encoding=encoding,
@@ -110,14 +111,14 @@ class TrainingService(metaclass=SingletonMeta):
             model_suffix='lgr'
         )
 
-        return result['df']
+        return result
 
     def naive_bayes(
         self,
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> pd.DataFrame:
+    ) -> AlgorithmResult:
         result = self.execute_algorithm(
             file_path=file_path,
             encoding=encoding,
@@ -127,14 +128,14 @@ class TrainingService(metaclass=SingletonMeta):
             model_suffix='nbb'
         )
 
-        return result['df']
+        return result
 
     def svm(
         self,
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> pd.DataFrame:
+    ) -> AlgorithmResult:
         result = self.execute_algorithm(
             file_path=file_path,
             encoding=encoding,
@@ -144,30 +145,30 @@ class TrainingService(metaclass=SingletonMeta):
             model_suffix='svm'
         )
 
-        return result['df']
+        return result
 
     def assemble(
         self,
         file_path: str,
         encoding: str,
         delimiter: str
-    ) -> pd.DataFrame:
+    ) -> AlgorithmResult:
         # Do analysis with naive bayes
-        df_nbb = self.naive_bayes(
+        result_nbb = self.naive_bayes(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
         )
 
         # Do analysis with logistic regression
-        df_lgr = self.logistic_regression(
+        result_lgr = self.logistic_regression(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
         )
 
         # Do analysis with support vector machine
-        df_svm = self.svm(
+        result_svm = self.svm(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
@@ -187,14 +188,35 @@ class TrainingService(metaclass=SingletonMeta):
 
         # Generate new dataframe
         new_df = pd.DataFrame(columns=columns)
-        new_df['answer'] = df_nbb['answer']
-        new_df['sentiment'] = df_nbb['sentiment']
-        new_df['nbb'] = df_nbb['nbb']
-        new_df['nbb_proba'] = df_nbb['nbb_proba']
-        new_df['lgr'] = df_lgr['lgr']
-        new_df['lgr_proba'] = df_lgr['lgr_proba']
-        new_df['svm'] = df_svm['svm']
-        new_df['svm_proba'] = df_svm['svm_proba']
+        new_df['answer'] = result_nbb.df['answer']
+        new_df['sentiment'] = result_nbb.df['sentiment']
+        new_df['nbb'] = result_nbb.df['nbb']
+        new_df['nbb_proba'] = result_nbb.df['nbb_proba']
+        new_df['lgr'] = result_lgr.df['lgr']
+        new_df['lgr_proba'] = result_lgr.df['lgr_proba']
+        new_df['svm'] = result_svm.df['svm']
+        new_df['svm_proba'] = result_svm.df['svm_proba']
         new_df['max'] = new_df[['nbb', 'lgr', 'svm']].mode(axis=1).iloc[:, 0]
 
-        return new_df
+        file_path = file_path.split("/")[-1]
+
+        metrics = metrics_service.get_metrics(
+            y_test=new_df['sentiment'],
+            y_pred=new_df['max']
+        )
+
+        file_path = f'{file_path[:-4]}.png'
+        confusion_file_path = f'confusion_max_{file_path}'
+
+        metrics_service.plot_confusion_matrix(
+            y_test=new_df['sentiment'],
+            y_pred=new_df['max'],
+            title=f'Max voting confusion matrix',
+            file_path=f'resources/metrics/{confusion_file_path}'
+        )
+
+        return AlgorithmResult(
+            df=new_df,
+            confusion_file_path=confusion_file_path,
+            metrics=metrics
+        )

@@ -1,4 +1,6 @@
+import pandas as pd
 import seaborn as sns
+from app.schemas.algorithm_schemas import AlgorithmMetrics
 from app.services.dataset_service import DatasetService
 from app.patterns.singleton import SingletonMeta
 import matplotlib.pyplot as plt
@@ -13,7 +15,7 @@ dataset_service = DatasetService()
 
 
 class MetricsService(metaclass=SingletonMeta):
-    def get_metrics(self, y_test, y_pred):
+    def get_metrics(self, y_test, y_pred) -> AlgorithmMetrics:
         accuracy = accuracy_score(y_test, y_pred)
 
         f1 = f1_score(
@@ -44,13 +46,13 @@ class MetricsService(metaclass=SingletonMeta):
             average='binary'
         )
 
-        return {
-            'accuracy': accuracy,
-            'f1': f1,
-            'precision': precision,
-            'sensitivity': sensitivity,
-            'specificity': specificity
-        }
+        return AlgorithmMetrics(
+            accuracy=accuracy,
+            f1=f1,
+            precision=precision,
+            sensitivity=sensitivity,
+            specificity=specificity
+        )
 
     def plot_confusion_matrix(self, y_test, y_pred, title: str, file_path: str):
         cm = confusion_matrix(y_test, y_pred=y_pred.round())
