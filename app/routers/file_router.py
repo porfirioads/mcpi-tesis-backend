@@ -12,7 +12,7 @@ file_service = FileService()
 @router.get('/', response_model=List[FileUpload])
 def get_dataset_list(path: str = 'uploads'):
     logger.debug('get_dataset_list()')
-    return file_service.get_datasets_list(path=path)
+    return file_service.get_datasets_list(path=f'resources/{path}')
 
 
 @router.post('/upload', response_model=FileUpload)
@@ -24,4 +24,4 @@ def upload_dataset(file: UploadFile = File()):
 @router.post('/download')
 def download_dataset(file_path: str):
     logger.debug('download_dataset()')
-    return file_service.download_dataset(file_path)
+    return file_service.download_dataset(file_path=f'resources/{file_path=}')

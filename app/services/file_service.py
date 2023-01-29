@@ -31,7 +31,7 @@ class FileService(metaclass=SingletonMeta):
 
     def get_datasets_list(self, path: str) -> List[FileUpload]:
         logger.debug('DatasetService.get_datasets_list()')
-        files = os.listdir(f'resources/{path}')
+        files = os.listdir(path)
 
         if '.gitkeep' in files:
             files.remove('.gitkeep')
@@ -48,10 +48,10 @@ class FileService(metaclass=SingletonMeta):
 
     def download_dataset(self, file_path: str) -> FileResponse:
         logger.debug('DatasetService.download_dataset()')
-        os.stat(f'resources/{file_path}')
+        os.stat(file_path)
 
         return FileResponse(
-            path=f'resources/{file_path}',
+            path=file_path,
             media_type='text/csv',
             filename=file_path
         )

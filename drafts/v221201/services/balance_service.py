@@ -1,13 +1,13 @@
 from app.services.cleaning_service import HEADERS, CleaningService
 from app.services.dataset_service import DatasetService
-from app.services.phrase_replacer_service import PhraseReplacerService
+from app.services.nltk_service import NltkService
 from app.utils.singleton import SingletonMeta
 import pandas as pd
 
 
 class BalanceService(metaclass=SingletonMeta):
     dataset_service = DatasetService()
-    phrase_replacer_service = PhraseReplacerService()
+    phrase_replacer_service = NltkService()
     cleaning_service = CleaningService()
 
     def balance(

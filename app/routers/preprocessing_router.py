@@ -15,7 +15,7 @@ def label_dataset(file_path: str):
     logger.debug('label_dataset()')
 
     df = preprocessing_service.label(
-        file_path=file_path,
+        file_path=f'resources/uploads/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
@@ -31,7 +31,7 @@ def balance_dataset(file_path: str):
     logger.debug('balance_dataset()')
 
     df = preprocessing_service.balance(
-        file_path=file_path,
+        file_path=f'resources/labeled/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
@@ -42,17 +42,17 @@ def balance_dataset(file_path: str):
     )
 
 
-@router.post('/extract_features', response_model=FileUpload)
-def extract_features_dataset(file_path: str):
-    logger.debug('extract_features_dataset()')
+@router.post('/term_document_matrix', response_model=FileUpload)
+def generate_term_document_matrix(file_path: str):
+    logger.debug('generate_term_document_matrix()')
 
-    df = preprocessing_service.extract_features(
-        file_path=file_path,
+    df = preprocessing_service.term_document_matrix(
+        file_path=f'resources/labeled/{file_path}',
         encoding='utf-8',
         delimiter=','
     )
 
     return dataset_service.to_csv(
         df=df,
-        file_path=f'resources/cleaned/cle_{file_path}'
+        file_path=f'resources/cleaned/tdm_{file_path}'
     )

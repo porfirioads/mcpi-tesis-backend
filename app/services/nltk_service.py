@@ -1,13 +1,29 @@
-
+import re
+import string
+from random import randint
+from app.patterns.singleton import SingletonMeta
+import nltk.data
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
-from random import randint
-import nltk.data
-
-from app.patterns.singleton import SingletonMeta
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
 
 
-class PhraseReplacerService(metaclass=SingletonMeta):
+class NltkService(metaclass=SingletonMeta):
+    def download(self):
+        nltk.download([
+            'names',
+            'stopwords',
+            'state_union',
+            'twitter_samples',
+            'movie_reviews',
+            'averaged_perceptron_tagger',
+            'vader_lexicon',
+            'punkt',
+            'wordnet',
+            'omw-1.4'
+        ])
+
     def extract_synonyms(self, text: str):
         output = ''
 
@@ -47,3 +63,28 @@ class PhraseReplacerService(metaclass=SingletonMeta):
                 output = output + " " + words[i]
 
         return output
+
+    def remove_stop_words(self, text: str) -> str:
+        stop_words = set(stopwords.words('english'))
+        word_tokens = word_tokenize(text)
+        filtered_words = [w for w in word_tokens if not w.lower() in stop_words]
+        return ' '.join(filtered_words)
+
+    def remove_punctuation(self, text: str) -> str:
+        puntuaction = string.punctuation
+        word_tokens = word_tokenize(text)
+        filtered_words = [
+            w for w in word_tokens if not w.lower() in puntuaction]
+        return ' '.join(filtered_words)
+
+    def remove_numbers(self, text: str) -> str:
+        return re.sub(r'\d+', '', text)
+
+    def stem_words(self, text: str) -> str:
+        stemmer = SnowballStemmer(language='english')
+        word_tokens = word_tokenize(text)
+        stemmed_words = [stemmer.stem(w) for w in word_tokens]
+        return ' '.join(stemmed_words)
+
+    def to_lower(self, text: str) -> str:
+        return text.lower()
