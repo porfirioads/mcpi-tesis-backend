@@ -15,6 +15,7 @@ class AlgorithmResult(BaseModel):
     df: pd.DataFrame
     auroc_file_path: Optional[str]
     confusion_file_path: str
+    metrics_file_path: Optional[str]
     metrics: AlgorithmMetrics
 
     class Config:

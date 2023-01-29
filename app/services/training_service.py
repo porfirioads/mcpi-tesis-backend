@@ -199,14 +199,13 @@ class TrainingService(metaclass=SingletonMeta):
         new_df['max'] = new_df[['nbb', 'lgr', 'svm']].mode(axis=1).iloc[:, 0]
 
         file_path = file_path.split("/")[-1]
+        metrics_file_path = f'metrics_{file_path}'
+        confusion_file_path = f'confusion_max_{file_path[:-4]}.png'
 
-        metrics = metrics_service.get_metrics(
+        metrics_max = metrics_service.get_metrics(
             y_test=new_df['sentiment'],
             y_pred=new_df['max']
         )
-
-        file_path = f'{file_path[:-4]}.png'
-        confusion_file_path = f'confusion_max_{file_path}'
 
         metrics_service.plot_confusion_matrix(
             y_test=new_df['sentiment'],
@@ -215,8 +214,29 @@ class TrainingService(metaclass=SingletonMeta):
             file_path=f'resources/metrics/{confusion_file_path}'
         )
 
+        metrics_df = pd.DataFrame(
+            data=[
+                result_nbb.metrics.dict(),
+                result_lgr.metrics.dict(),
+                result_svm.metrics.dict(),
+                metrics_max.dict()
+            ]
+        )
+
+        metrics_df.insert(
+            loc=0,
+            column='algorithm',
+            value=['nbb', 'lgr', 'svm', 'max']
+        )
+
+        dataset_service.to_csv(
+            df=metrics_df,
+            file_path=f'resources/metrics/{metrics_file_path}'
+        )
+
         return AlgorithmResult(
             df=new_df,
             confusion_file_path=confusion_file_path,
-            metrics=metrics
+            metrics_file_path=metrics_file_path,
+            metrics=metrics_max
         )
