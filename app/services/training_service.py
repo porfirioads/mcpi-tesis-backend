@@ -45,7 +45,7 @@ class TrainingService(metaclass=SingletonMeta):
         # Split dataset in training and test
         x_values = df[word_columns]
         y_values = df['sentiment']
-        seed = 50
+        seed = 1
 
         x_train, x_test, y_train, y_test = train_test_split(
             x_values,
