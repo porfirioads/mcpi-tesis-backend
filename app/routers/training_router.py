@@ -38,7 +38,7 @@ def train_logistic_regression(file_path: str):
 
     return dataset_service.to_csv(
         df=df,
-        file_path=f'resources/trained/lgr_{file_path}'
+        file_path=f'resources/classified/lgr_{file_path}'
     )
 
 
@@ -54,7 +54,7 @@ def train_svm(file_path: str):
 
     return dataset_service.to_csv(
         df=df,
-        file_path=f'resources/trained/svm_{file_path}'
+        file_path=f'resources/classified/svm_{file_path}'
     )
 
 
@@ -70,5 +70,5 @@ def train_all(file_path: str):
 
     return dataset_service.to_csv(
         df=df,
-        file_path=f'resources/trained/all_{file_path}'
+        file_path=f'resources/classified/all_{file_path}'
     )

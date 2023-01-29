@@ -143,24 +143,55 @@ class TrainingService(metaclass=SingletonMeta):
         encoding: str,
         delimiter: str
     ) -> pd.DataFrame:
+        # Read dataset
+        df = dataset_service.read_dataset(
+            file_path=file_path,
+            encoding=encoding,
+            delimiter=delimiter
+        )
+
+        # Convert sentiment column to categories
+        df['sentiment'] = df['sentiment'].replace(
+            {'Positivo': 1, 'Negativo': -1}
+        )
+
+        # Do analysis with naive bayes
         df_nbb = self.naive_bayes(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
         )
 
+        # Do analysis with logistic regression
         df_lgr = self.logistic_regression(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
         )
 
+        # Do analysis with support vector machine
         df_svm = self.svm(
             file_path=file_path,
             encoding=encoding,
             delimiter=delimiter
         )
 
-        print(df_nbb, df_lgr, df_svm)
+        columns = list(df.columns.values)
+        columns.insert(2, 'nbb')
+        columns.insert(3, 'lgr')
+        columns.insert(4, 'svm')
+        columns.insert(5, 'max')
 
-        # TODO: Assemble
+        # Generate new dataframe
+        new_df = pd.DataFrame(columns=columns)
+        new_df[columns[6:]] = df_nbb[columns[6:]]
+        new_df['answer'] = df['answer']
+        new_df['sentiment'] = df['sentiment']
+        new_df['nbb'] = df_nbb['sentiment']
+        new_df['lgr'] = df_lgr['sentiment']
+        new_df['svm'] = df_svm['sentiment']
+        new_df['max'] = new_df[
+            ['nbb', 'lgr', 'svm', 'max']
+        ].mode(axis=1).iloc[0]
+
+        return new_df
