@@ -16,6 +16,9 @@ seaborn = "*"
 imbalanced-learn = "*"
 jupyterlab = "*"
 statsmodels = "*"
+cmake = "*"
+wheel = "*"
+setuptools = "*"
 
 [dev-packages]
 flake8 = "*"

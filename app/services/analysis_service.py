@@ -1,9 +1,8 @@
-import pandas as pd
 import joblib
 from app.patterns.singleton import SingletonMeta
 from app.services.dataset_service import DatasetService
 from app.services.nltk_service import NltkService
-
+import matplotlib.pyplot as plt
 
 dataset_service = DatasetService()
 nltk_service = NltkService()
@@ -26,13 +25,18 @@ class AnalysisService(metaclass=SingletonMeta):
         questions = [
             'Do you have other climate mitigation ideas? Submit here:',
             'Do you have other climate adaptation ideas? Submit here:',
-            'Do you have other ideas for environmental equity, justice, and community resilience? Submit here:',
+            'Do you have other ideas for environmental equity, justice,'
+            + ' and community resilience? Submit here:',
             'Do you have other policy ideas? Submit here:',
-            'Are you interested in participating in any other ways to help make Tucson environmentally sustainable? Submit here:',
-            'Is there anything else you would like to share that was not already addressed?'
+            'Are you interested in participating in any other ways to help'
+            + ' make Tucson environmentally sustainable? Submit here:',
+            'Is there anything else you would like to share that was not'
+            + ' already addressed?'
         ]
 
         model = joblib.load(model_file_path)
+
+        print(model)
 
         for question in questions:
             opinions = df[question].str.strip().dropna(how='all')\
@@ -49,9 +53,27 @@ class AnalysisService(metaclass=SingletonMeta):
     def generate_wordcloud(
         self,
         text: str,
+        title: str,
         file_path: str
     ):
-        pass
+        from wordcloud import WordCloud
+
+        # Configure the wordcloud
+        wordcloud = WordCloud(width=1500, height=500,
+                              background_color='white',
+                              min_font_size=10).generate(text)
+
+        # Save the wordcloud
+        plt.figure(figsize=(15, 5), facecolor=None)
+        plt.imshow(wordcloud)
+        plt.axis("off")
+        plt.tight_layout(pad=0)
+
+        plt.title(title, fontdict={
+            'family': 'sans', 'color': 'black', 'size': 50}, pad=20)
+
+        plt.savefig(file_path)
+        plt.close()
 
     def logistic_regression(
         self,

@@ -1,4 +1,3 @@
-import pandas as pd
 import seaborn as sns
 from app.schemas.algorithm_schemas import AlgorithmMetrics
 from app.services.dataset_service import DatasetService

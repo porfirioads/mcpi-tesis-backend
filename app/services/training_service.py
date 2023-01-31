@@ -213,7 +213,7 @@ class TrainingService(metaclass=SingletonMeta):
         metrics_service.plot_confusion_matrix(
             y_test=new_df['sentiment'],
             y_pred=new_df['max'],
-            title=f'Max voting confusion matrix',
+            title='Max voting confusion matrix',
             file_path=f'resources/metrics/{confusion_file_path}'
         )
 
