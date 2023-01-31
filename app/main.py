@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.config import logger
 from app.routers.preprocessing_router import router as preprocessing_router
 from app.routers.training_router import router as training_router
+from app.routers.analysis_router import router as analysis_router
 from app.routers.file_router import router as file_router
 from app.services.nltk_service import NltkService
 
@@ -26,6 +27,7 @@ app.add_middleware(
 app.include_router(file_router)
 app.include_router(preprocessing_router)
 app.include_router(training_router)
+app.include_router(analysis_router)
 
 nltk_service = NltkService()
 

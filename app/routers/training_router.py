@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from app.schemas.file_schemas import FileUpload
 from app.services.dataset_service import DatasetService
-from app.config import logger
 from app.services.training_service import TrainingService
+from app.config import logger
 
-router = APIRouter(prefix='/training', tags=['Analysis'])
+router = APIRouter(prefix='/training', tags=['Training'])
 
 dataset_service = DatasetService()
 training_service = TrainingService()
