@@ -8,6 +8,7 @@ from app.patterns.singleton import SingletonMeta
 from app.schemas.algorithm_schemas import AlgorithmResult
 from app.services.dataset_service import DatasetService
 from app.services.metrics_service import MetricsService
+import joblib
 
 dataset_service = DatasetService()
 metrics_service = MetricsService()
@@ -55,6 +56,8 @@ class TrainingService(metaclass=SingletonMeta):
         )
 
         model.fit(x_train, y_train)
+        model_file_path = f'resources/models/{model_suffix}.sav'
+        joblib.dump(model, model_file_path)
         y_pred = model.predict(x_test)
         y_proba = model.predict_proba(x_test)
         y_proba = [str(proba) for proba in y_proba]
