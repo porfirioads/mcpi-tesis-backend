@@ -1,0 +1,18 @@
+version: "3.5"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GIT_NAME=Porfirio Ángel Díaz Sánchez
+        - GIT_EMAIL=porfirioads@gmail.com
+    tty: true
+    volumes:
+      - .:/code
+      - /Users/porfirioads/.ssh/id_rsa:/root/.ssh/id_rsa
+      - /Users/porfirioads/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub
+    ports:
+      - 8000:8000
+    restart: on-failure
