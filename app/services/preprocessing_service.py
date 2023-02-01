@@ -148,8 +148,10 @@ class PreprocessingService(metaclass=SingletonMeta):
             ascending=False
         )
 
-        # Top 75 words
-        term_document_matrix = term_document_matrix[:75]
+        # Keep words with al least 5 occurrences
+        term_document_matrix = term_document_matrix[
+            term_document_matrix['total_count'] >= 5
+        ]
 
         # Transpose dataframe
         td = term_document_matrix.drop(columns=['total_count']).T
