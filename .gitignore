@@ -251,16 +251,5 @@ baseline.json
 !.vscode/extensions.json
 
 # Uploaded datasets
-# resources/uploads/*
-# !resources/uploads/.gitkeep
-# !resources/cleaned
-# resources/cleaned/*
-# !resources/cleaned/.gitkeep
-# !resources/classified
-# resources/classified/*
-# !resources/classified/.gitkeep
-# !resources/balanced
-# resources/balanced/*
-# !resources/balanced/.gitkeep
-resources/test/*
-!resources/test/.gitkeep
+resources/tmp/*
+!resources/tmp/.gitkeep

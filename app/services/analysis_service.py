@@ -40,6 +40,14 @@ class AnalysisService(metaclass=SingletonMeta):
 
         model = joblib.load(model_file_path)
 
+        # Read the term document matrix used to train the models
+        training_tdm_df = dataset_service.read_dataset(
+            file_path='resources/cleaned/'
+            + 'tdm_bal_lab_respuestas_form_1671774115.csv',
+            encoding='utf-8',
+            delimiter=','
+        )
+
         for question in questions:
             q_df = pd.DataFrame()
             q_df['answer'] = df[questions[question]].values.tolist()
@@ -64,25 +72,33 @@ class AnalysisService(metaclass=SingletonMeta):
                 file_path=f'resources/wordclouds/{question}.png'
             )
 
-            # TODO: Generate the tdm for the questions answers
-            tdm_df = dataset_service.read_dataset(
-                file_path='resources/cleaned/tdm_bal_lab_respuestas_form_1671774115.csv',
-                encoding='utf-8',
-                delimiter=','
-            )
-
             # Get word column names
-            word_columns = tdm_df.columns[2:].to_list()
+            word_columns = training_tdm_df.columns[2:].to_list()
 
-            # Delete unecessary columns
-            tdm_df = tdm_df.drop(columns=['answer', 'sentiment'])
+            new_rows = []
+
+            for index, row in training_tdm_df.iterrows():
+                row_data = {}
+                for column in word_columns:
+                    if column in row['answer']:
+                        row_data[column] = 'Yes'
+                    else:
+                        row_data[column] = 'No'
+                new_rows.append(row_data)
+
+            # Create a new dataframe with classification results
+            target_tdm_df = pd.DataFrame(
+                columns=word_columns,
+                data=new_rows
+            )
 
             # Convert word columns to categories
             for column in word_columns:
-                tdm_df[column] = tdm_df[column].astype('category').cat.codes
+                target_tdm_df[column] = target_tdm_df[column].astype(
+                    'category').cat.codes
 
             # Do the predictions
-            predictions = model.predict(tdm_df)
+            predictions = model.predict(target_tdm_df)
 
             print(predictions)
 
