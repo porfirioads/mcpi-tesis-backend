@@ -2,10 +2,21 @@ import joblib
 from app.patterns.singleton import SingletonMeta
 from app.services.dataset_service import DatasetService
 from app.services.nltk_service import NltkService
-import matplotlib.pyplot as plt
+from app.services.wordcloud_service import WordcloudService
+import pandas as pd
 
 dataset_service = DatasetService()
 nltk_service = NltkService()
+wordcloud_service = WordcloudService()
+
+questions = {
+    'Q_MITIGATION': 'Do you have other climate mitigation ideas? Submit here:',
+    'Q_ADAPTATION': 'Do you have other climate adaptation ideas? Submit here:',
+    'Q_EQUITY': 'Do you have other ideas for environmental equity, justice, and community resilience? Submit here:',
+    'Q_POLICY': 'Do you have other policy ideas? Submit here:',
+    'Q_SUSTAINABLE': 'Are you interested in participating in any other ways to help make Tucson environmentally sustainable? Submit here:',
+    'Q_OTHER': 'Is there anything else you would like to share that was not already addressed?'
+}
 
 
 class AnalysisService(metaclass=SingletonMeta):
@@ -22,58 +33,30 @@ class AnalysisService(metaclass=SingletonMeta):
             delimiter=delimiter,
         )
 
-        questions = [
-            'Do you have other climate mitigation ideas? Submit here:',
-            'Do you have other climate adaptation ideas? Submit here:',
-            'Do you have other ideas for environmental equity, justice,'
-            + ' and community resilience? Submit here:',
-            'Do you have other policy ideas? Submit here:',
-            'Are you interested in participating in any other ways to help'
-            + ' make Tucson environmentally sustainable? Submit here:',
-            'Is there anything else you would like to share that was not'
-            + ' already addressed?'
-        ]
-
         model = joblib.load(model_file_path)
 
-        print(model)
-
         for question in questions:
-            opinions = df[question].str.strip().dropna(how='all')\
-                .apply(nltk_service.to_lower)\
-                .apply(nltk_service.remove_stop_words)\
-                .apply(nltk_service.remove_punctuation)\
-                .apply(nltk_service.remove_numbers)\
-                .apply(nltk_service.stem_words)
+            q_df = pd.DataFrame()
+            q_df['answer'] = df[questions[question]].values.tolist()
 
-            for opinion in opinions:
-                print(opinion)
-                # model.predict(opinion)
+            q_df = q_df.replace(r'\n', ' ', regex=True)
+            q_df = q_df.replace(r'^\s*no\s*$', '', regex=True)
+            q_df = q_df.replace(r'^\s*NO\s*$', '', regex=True)
+            q_df = q_df.replace(r'^\s*No\s*$', '', regex=True)
+            q_df = q_df.replace(r'^\s*nO\s*$', '', regex=True)
+            q_df = q_df.replace(r'^\s*-\s*$', '', regex=True)
+            nan_value = float("NaN")
+            q_df.replace('', nan_value, inplace=True)
+            q_df = q_df.dropna()
+            text = ', '.join(str(x) for x in q_df['answer'].values.tolist())
 
-    def generate_wordcloud(
-        self,
-        text: str,
-        title: str,
-        file_path: str
-    ):
-        from wordcloud import WordCloud
+            wordcloud_service.generate_wordcloud(
+                text=text,
+                title=questions[question],
+                file_path=f'resources/wordclouds/{question}.png'
+            )
 
-        # Configure the wordcloud
-        wordcloud = WordCloud(width=1500, height=500,
-                              background_color='white',
-                              min_font_size=10).generate(text)
-
-        # Save the wordcloud
-        plt.figure(figsize=(15, 5), facecolor=None)
-        plt.imshow(wordcloud)
-        plt.axis("off")
-        plt.tight_layout(pad=0)
-
-        plt.title(title, fontdict={
-            'family': 'sans', 'color': 'black', 'size': 50}, pad=20)
-
-        plt.savefig(file_path)
-        plt.close()
+            # model.predict(opinion)
 
     def logistic_regression(
         self,
