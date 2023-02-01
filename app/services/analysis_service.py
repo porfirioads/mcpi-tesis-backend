@@ -1,22 +1,26 @@
-import re
 import joblib
 from app.patterns.singleton import SingletonMeta
 from app.services.dataset_service import DatasetService
 from app.services.nltk_service import NltkService
+from app.services.preprocessing_service import PreprocessingService
 from app.services.wordcloud_service import WordcloudService
 import pandas as pd
 
 dataset_service = DatasetService()
 nltk_service = NltkService()
 wordcloud_service = WordcloudService()
+preprocessing_service = PreprocessingService()
 
 questions = {
     'Q_ADAPTATION': 'Do you have other climate adaptation ideas? Submit here:',
     'Q_MITIGATION': 'Do you have other climate mitigation ideas? Submit here:',
-    'Q_EQUITY': 'Do you have other ideas for environmental equity, justice, and community resilience? Submit here:',
+    'Q_EQUITY': 'Do you have other ideas for environmental equity, justice,'
+    + ' and community resilience? Submit here:',
     'Q_POLICY': 'Do you have other policy ideas? Submit here:',
-    'Q_SUSTAINABLE': 'Are you interested in participating in any other ways to help make Tucson environmentally sustainable? Submit here:',
-    'Q_OTHER': 'Is there anything else you would like to share that was not already addressed?'
+    'Q_SUSTAINABLE': 'Are you interested in participating in any other ways'
+    + ' to help make Tucson environmentally sustainable? Submit here:',
+    'Q_OTHER': 'Is there anything else you would like to share that was not'
+    + ' already addressed?'
 }
 
 
@@ -35,6 +39,7 @@ class AnalysisService(metaclass=SingletonMeta):
         )
 
         model = joblib.load(model_file_path)
+        print(model)
 
         for question in questions:
             q_df = pd.DataFrame()
