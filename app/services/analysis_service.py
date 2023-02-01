@@ -39,7 +39,6 @@ class AnalysisService(metaclass=SingletonMeta):
         )
 
         model = joblib.load(model_file_path)
-        print(model)
 
         for question in questions:
             q_df = pd.DataFrame()
@@ -58,13 +57,34 @@ class AnalysisService(metaclass=SingletonMeta):
             q_df = q_df.dropna()
             text = ', '.join(str(x) for x in q_df['answer'].values.tolist())
 
+            # Generate wordcloud for all question answers
             wordcloud_service.generate_wordcloud(
                 text=text,
                 title=questions[question],
                 file_path=f'resources/wordclouds/{question}.png'
             )
 
-            # model.predict(opinion)
+            # TODO: Generate the tdm for the questions answers
+            tdm_df = dataset_service.read_dataset(
+                file_path='resources/cleaned/tdm_bal_lab_respuestas_form_1671774115.csv',
+                encoding='utf-8',
+                delimiter=','
+            )
+
+            # Get word column names
+            word_columns = tdm_df.columns[2:].to_list()
+
+            # Delete unecessary columns
+            tdm_df = tdm_df.drop(columns=['answer', 'sentiment'])
+
+            # Convert word columns to categories
+            for column in word_columns:
+                tdm_df[column] = tdm_df[column].astype('category').cat.codes
+
+            # Do the predictions
+            predictions = model.predict(tdm_df)
+
+            print(predictions)
 
     def logistic_regression(
         self,
