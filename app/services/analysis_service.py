@@ -1,3 +1,4 @@
+import re
 import joblib
 from app.patterns.singleton import SingletonMeta
 from app.services.dataset_service import DatasetService
@@ -10,8 +11,8 @@ nltk_service = NltkService()
 wordcloud_service = WordcloudService()
 
 questions = {
-    'Q_MITIGATION': 'Do you have other climate mitigation ideas? Submit here:',
     'Q_ADAPTATION': 'Do you have other climate adaptation ideas? Submit here:',
+    'Q_MITIGATION': 'Do you have other climate mitigation ideas? Submit here:',
     'Q_EQUITY': 'Do you have other ideas for environmental equity, justice, and community resilience? Submit here:',
     'Q_POLICY': 'Do you have other policy ideas? Submit here:',
     'Q_SUSTAINABLE': 'Are you interested in participating in any other ways to help make Tucson environmentally sustainable? Submit here:',
@@ -38,8 +39,10 @@ class AnalysisService(metaclass=SingletonMeta):
         for question in questions:
             q_df = pd.DataFrame()
             q_df['answer'] = df[questions[question]].values.tolist()
-
             q_df = q_df.replace(r'\n', ' ', regex=True)
+            q_df = q_df.replace('(?i)tucson', '', regex=True)
+            q_df = q_df.replace('(?i)city', '', regex=True)
+            q_df = q_df.replace('(?i)city', '', regex=True)
             q_df = q_df.replace(r'^\s*no\s*$', '', regex=True)
             q_df = q_df.replace(r'^\s*NO\s*$', '', regex=True)
             q_df = q_df.replace(r'^\s*No\s*$', '', regex=True)

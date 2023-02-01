@@ -11,12 +11,12 @@ class WordcloudService(metaclass=SingletonMeta):
         file_path: str
     ):
         # Configure the wordcloud
-        wordcloud = WordCloud(width=1500, height=500,
+        wordcloud = WordCloud(width=1500, height=800,
                               background_color='white',
                               min_font_size=10).generate(text)
 
         # Save the wordcloud
-        plt.figure(figsize=(15, 5), facecolor=None)
+        plt.figure(figsize=(15, 8), facecolor=None)
         plt.imshow(wordcloud)
         plt.axis("off")
         plt.tight_layout(pad=0)
