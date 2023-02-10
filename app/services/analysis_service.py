@@ -5,6 +5,9 @@ from app.services.nltk_service import NltkService
 from app.services.preprocessing_service import PreprocessingService
 from app.services.wordcloud_service import WordcloudService
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 
 dataset_service = DatasetService()
 nltk_service = NltkService()
@@ -47,6 +50,9 @@ class AnalysisService(metaclass=SingletonMeta):
             encoding='utf-8',
             delimiter=','
         )
+
+        neg_serie_data = {}
+        pos_serie_data = {}
 
         for question in questions:
             q_df = pd.DataFrame()
@@ -129,6 +135,24 @@ class AnalysisService(metaclass=SingletonMeta):
             print(f'pos: {len(positives)}')
             print(f'neg: {len(negatives)}')
             print()
+
+            pos_serie_data[question] = len(positives)
+            neg_serie_data[question] = len(negatives)
+
+        pos_serie = pd.Series(pos_serie_data, name='Positives')
+        neg_serie = pd.Series(neg_serie_data, name='Negatives')
+
+        plt.figure(figsize=(15, 9))
+
+        pos_serie.plot.bar(color='blue')
+        neg_serie.plot.bar(color='orange')
+
+        plt.title('Total of answers by question')
+        plt.xlabel("Question")
+        plt.ylabel("Total")
+        plt.legend()
+        plt.savefig('resources/metrics/total_by_question.png')
+        plt.close()
 
     def logistic_regression(
         self,
