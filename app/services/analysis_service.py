@@ -77,7 +77,7 @@ class AnalysisService(metaclass=SingletonMeta):
 
             new_rows = []
 
-            for index, row in training_tdm_df.iterrows():
+            for index, row in q_df.iterrows():
                 row_data = {}
                 for column in word_columns:
                     if column in row['answer']:
@@ -100,7 +100,35 @@ class AnalysisService(metaclass=SingletonMeta):
             # Do the predictions
             predictions = model.predict(target_tdm_df)
 
-            print(predictions)
+            positives = []
+            negatives = []
+
+            for i in range(len(predictions)):
+                prediction = predictions[i]
+
+                if prediction == 1:
+                    positives.append(q_df['answer'].values[i])
+                elif prediction == -1:
+                    negatives.append(q_df['answer'].values[i])
+
+            # Generate wordcloud for question positive answers
+            wordcloud_service.generate_wordcloud(
+                text=', '.join(str(x) for x in positives),
+                title=questions[question],
+                file_path=f'resources/wordclouds/{question}_POS.png'
+            )
+
+            # Generate wordcloud for question negative answers
+            wordcloud_service.generate_wordcloud(
+                text=', '.join(str(x) for x in negatives),
+                title=questions[question],
+                file_path=f'resources/wordclouds/{question}_NEG.png'
+            )
+
+            print(question)
+            print(f'pos: {len(positives)}')
+            print(f'neg: {len(negatives)}')
+            print()
 
     def logistic_regression(
         self,
