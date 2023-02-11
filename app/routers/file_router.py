@@ -24,4 +24,4 @@ def upload_dataset(file: UploadFile = File()):
 @router.post('/download')
 def download_dataset(file_path: str):
     logger.debug('download_dataset()')
-    return file_service.download_dataset(file_path=f'resources/{file_path=}')
+    return file_service.download_dataset(file_path=f'resources/{file_path}')

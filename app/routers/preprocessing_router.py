@@ -10,6 +10,20 @@ dataset_service = DatasetService()
 preprocessing_service = PreprocessingService()
 
 
+@router.get('/details/{file_path}')
+def get_dataset(
+        file_path: str,
+        encoding: str = 'latin-1',
+        delimiter: str = ','
+):
+    df = dataset_service.read_dataset(
+        file_path=f'resources/uploads/{file_path}',
+        encoding=encoding,
+        delimiter=delimiter
+    )
+    return dataset_service.get_dataset_summary(df)
+
+
 @router.post('/label', response_model=FileUpload)
 def label_dataset(file_path: str):
     logger.debug('label_dataset()')
